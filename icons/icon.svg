@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!--
+    FullShot mark — original design, not affiliated with or derived from any
+    existing screenshot extension's branding.
+
+    Reading: a dark "viewport" frame (the current screen) sits in front of a
+    lighter frame peeking out above-left of it (the rest of the page, still to
+    be captured), with a downward arrow inside the viewport standing for the
+    scroll-and-stitch capture motion. Flat, two-tone, no gradients, no text —
+    legible down to 16 px.
+  -->
+  <rect x="10" y="6" width="88" height="88" rx="16" fill="#F4A259" />
+  <rect x="30" y="34" width="88" height="88" rx="16" fill="#1D3557" />
+  <rect x="66" y="51" width="16" height="28" fill="#F4A259" />
+  <polygon points="54,79 94,79 74,105" fill="#F4A259" />
+</svg>

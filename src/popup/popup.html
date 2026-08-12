@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<title data-i18n="ext_name">FullShot</title>
+<link rel="stylesheet" href="../shared/theme.css">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<main class="fs-popup">
+  <header class="fs-popup__header">
+    <span class="fs-popup__logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"></path>
+        <circle cx="12" cy="13" r="3.5"></circle>
+      </svg>
+    </span>
+    <h1 class="fs-popup__title" data-i18n="ext_name">FullShot</h1>
+  </header>
+
+  <div class="fs-popup__actions">
+    <button type="button" class="fs-popup__btn" data-mode="fullpage">
+      <span class="fs-popup__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="2" width="18" height="20" rx="2"></rect>
+          <path d="M7 8h10"></path>
+          <path d="M7 12h10"></path>
+          <path d="M7 16h6"></path>
+        </svg>
+      </span>
+      <span class="fs-popup__label" data-i18n="popup_fullpage">Full page</span>
+      <span class="fs-popup__shortcut" data-cmd="capture-fullpage"></span>
+    </button>
+
+    <button type="button" class="fs-popup__btn" data-mode="visible">
+      <span class="fs-popup__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+          <path d="M8 21h8"></path>
+          <path d="M12 17v4"></path>
+        </svg>
+      </span>
+      <span class="fs-popup__label" data-i18n="popup_visible">Visible area</span>
+      <span class="fs-popup__shortcut" data-cmd="capture-visible"></span>
+    </button>
+
+    <button type="button" class="fs-popup__btn" data-mode="select">
+      <span class="fs-popup__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 3"></rect>
+          <circle cx="4" cy="4" r="1.2" fill="currentColor" stroke="none"></circle>
+          <circle cx="20" cy="4" r="1.2" fill="currentColor" stroke="none"></circle>
+          <circle cx="4" cy="20" r="1.2" fill="currentColor" stroke="none"></circle>
+          <circle cx="20" cy="20" r="1.2" fill="currentColor" stroke="none"></circle>
+        </svg>
+      </span>
+      <span class="fs-popup__label" data-i18n="popup_select">Select area</span>
+      <span class="fs-popup__shortcut" data-cmd="capture-region"></span>
+    </button>
+
+    <button type="button" class="fs-popup__btn" id="fs-options-btn">
+      <span class="fs-popup__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 13a7.9 7.9 0 0 0 0-2l2-1.5-2-3.4-2.4 1a7.7 7.7 0 0 0-1.7-1L14.9 3h-3.8l-.4 2.6a7.7 7.7 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.9 7.9 0 0 0 0 2l-2 1.5 2 3.4 2.4-1c.5.4 1.1.8 1.7 1l.4 2.6h3.8l.4-2.6c.6-.2 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.5Z"></path>
+        </svg>
+      </span>
+      <span class="fs-popup__label" data-i18n="popup_options">Options</span>
+    </button>
+  </div>
+</main>
+<script src="../shared/protocol.js"></script>
+<script src="../shared/util.js"></script>
+<script src="../shared/settings.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+/*
+ * FullShot — shared design tokens & base component layer.
+ *
+ * Loaded first, before any page-specific stylesheet, on every extension page
+ * (popup, options, editor). No web fonts, no remote assets: everything here
+ * must work completely offline.
+ *
+ * Token set (ARCHITECTURE.md §9.1) — do not rename, do not add, do not drop:
+ *   --fs-bg, --fs-bg-elev, --fs-surface, --fs-border,
+ *   --fs-text, --fs-text-dim, --fs-accent, --fs-accent-text,
+ *   --fs-danger, --fs-ok, --fs-shadow, --fs-radius, --fs-radius-sm
+ *
+ * Light values live on the bare :root. Dark values are declared in BOTH
+ * places below (prefers-color-scheme AND the explicit data-theme="dark"
+ * attribute) so an explicit choice always wins over the OS preference, in
+ * either direction. A colour must never be defined only inside a media
+ * query — see the mirrored blocks below.
+ */
+
+:root {
+  --fs-bg: #f4f5f7;
+  --fs-bg-elev: #ffffff;
+  --fs-surface: #ffffff;
+  --fs-border: #d9dce1;
+  --fs-text: #1b1e24;
+  --fs-text-dim: #6b7280;
+  --fs-accent: #2563eb;
+  --fs-accent-text: #ffffff;
+  --fs-danger: #dc2626;
+  --fs-ok: #16a34a;
+  --fs-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
+
+  /* Structural, not colour — identical in both themes. */
+  --fs-radius: 10px;
+  --fs-radius-sm: 6px;
+}
+
+/* OS-level dark preference — only applies when the user has not forced light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --fs-bg: #17181c;
+    --fs-bg-elev: #1f2126;
+    --fs-surface: #23252b;
+    --fs-border: #34363d;
+    --fs-text: #edeef1;
+    --fs-text-dim: #9aa0ab;
+    --fs-accent: #5b8def;
+    --fs-accent-text: #0b1120;
+    --fs-danger: #f16565;
+    --fs-ok: #33cc74;
+    --fs-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Explicit user choice — wins over the OS preference in both directions. */
+:root[data-theme='dark'] {
+  --fs-bg: #17181c;
+  --fs-bg-elev: #1f2126;
+  --fs-surface: #23252b;
+  --fs-border: #34363d;
+  --fs-text: #edeef1;
+  --fs-text-dim: #9aa0ab;
+  --fs-accent: #5b8def;
+  --fs-accent-text: #0b1120;
+  --fs-danger: #f16565;
+  --fs-ok: #33cc74;
+  --fs-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+}
+
+/* -------------------------------------------------------------------------
+ * Base layer
+ * ---------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--fs-text);
+  background: var(--fs-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus ring, built from the accent colour, only shown for keyboard focus. */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--fs-accent);
+  outline-offset: 2px;
+  border-radius: var(--fs-radius-sm);
+}
+
+a {
+  color: var(--fs-accent);
+}
+
+/* -------------------------------------------------------------------------
+ * Shared components — reused by popup, options and the editor.
+ * ---------------------------------------------------------------------- */
+
+.fs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-sm);
+  background: var(--fs-surface);
+  color: var(--fs-text);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+.fs-btn:hover {
+  background: var(--fs-bg-elev);
+  border-color: var(--fs-accent);
+}
+
+.fs-btn:active {
+  transform: translateY(1px);
+}
+
+.fs-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.fs-btn--primary {
+  background: var(--fs-accent);
+  border-color: var(--fs-accent);
+  color: var(--fs-accent-text);
+}
+
+.fs-btn--primary:hover {
+  filter: brightness(1.08);
+  border-color: var(--fs-accent);
+}
+
+.fs-btn--danger {
+  color: var(--fs-danger);
+  border-color: var(--fs-danger);
+}
+
+.fs-btn--danger:hover {
+  background: var(--fs-danger);
+  color: var(--fs-accent-text);
+}
+
+.fs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.fs-field label {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--fs-text);
+}
+
+.fs-field__desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fs-text-dim);
+}
+
+.fs-field input[type='text'],
+.fs-field input[type='number'],
+.fs-field input[type='range'],
+.fs-field select,
+.fs-field textarea {
+  font: inherit;
+  color: var(--fs-text);
+  background: var(--fs-bg-elev);
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-sm);
+  padding: 8px 10px;
+}
+
+.fs-field input[type='text']:disabled,
+.fs-field input[type='number']:disabled,
+.fs-field input[type='range']:disabled,
+.fs-field select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fs-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 10px 16px;
+  border-radius: var(--fs-radius);
+  background: var(--fs-surface);
+  color: var(--fs-text);
+  border: 1px solid var(--fs-border);
+  box-shadow: var(--fs-shadow);
+  font-size: 13px;
+  z-index: 1000;
+}
+
+.fs-toast[hidden] {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Motion
+ * ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

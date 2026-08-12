@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<title data-i18n="ext_name">FullShot</title>
+<link rel="stylesheet" href="../shared/theme.css">
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+<div class="fs-options">
+  <header class="fs-options__header">
+    <span class="fs-options__logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"></path>
+        <circle cx="12" cy="13" r="3.5"></circle>
+      </svg>
+    </span>
+    <h1 data-i18n="ext_name">FullShot</h1>
+  </header>
+
+  <main class="fs-options__main">
+    <!-- Capture ------------------------------------------------------- -->
+    <fieldset class="fs-fieldset">
+      <legend data-i18n="options_section_capture">Capture</legend>
+
+      <div class="fs-field">
+        <label for="opt-defaultAction" data-i18n="options_default_action">Toolbar click</label>
+        <select id="opt-defaultAction">
+          <option value="fullpage" data-i18n="popup_fullpage">Full page</option>
+          <option value="visible" data-i18n="popup_visible">Visible area</option>
+          <option value="select" data-i18n="popup_select">Select area</option>
+          <option value="menu" data-i18n="options_default_action_menu">Ask every time</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_default_action_desc">What the toolbar icon and Alt+Shift+P do.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-hideFixed" data-i18n="options_hide_fixed">Fixed &amp; sticky elements</label>
+        <select id="opt-hideFixed">
+          <option value="smart" data-i18n="options_hide_fixed_smart">Smart (recommended)</option>
+          <option value="always" data-i18n="options_hide_fixed_always">Always hide</option>
+          <option value="never" data-i18n="options_hide_fixed_never">Never hide</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_hide_fixed_desc">How sticky headers, cookie banners and chat widgets are handled while stitching.</p>
+      </div>
+
+      <div class="fs-field fs-field--checkbox">
+        <input type="checkbox" id="opt-preScrollForLazy">
+        <label for="opt-preScrollForLazy" data-i18n="options_pre_scroll_for_lazy">Pre-scroll to load lazy images</label>
+        <p class="fs-field__desc" data-i18n="options_pre_scroll_for_lazy_desc">One fast pass down the page before capturing, so lazy-loaded images have time to appear.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-settleMs" data-i18n="options_settle_ms">Settle time (ms)</label>
+        <input type="number" id="opt-settleMs" min="0" max="3000" step="10">
+        <p class="fs-field__desc" data-i18n="options_settle_ms_desc">Extra wait after each scroll step, in milliseconds. 0 lets FullShot choose automatically.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-scaleMode" data-i18n="options_scale_mode">Resolution</label>
+        <select id="opt-scaleMode">
+          <option value="device" data-i18n="options_scale_mode_device">Full (device pixels)</option>
+          <option value="css" data-i18n="options_scale_mode_css">Standard (CSS pixels)</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_scale_mode_desc">Device keeps the full HiDPI resolution; CSS downsamples to 1×.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-maxPixels" data-i18n="options_max_pixels">Maximum capture size</label>
+        <select id="opt-maxPixels">
+          <option data-preset="standard" data-i18n="options_max_pixels_standard">Standard (≈268 Mpx)</option>
+          <option data-preset="large" data-i18n="options_max_pixels_large">Large</option>
+          <option data-preset="maximum" data-i18n="options_max_pixels_maximum">Maximum</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_max_pixels_desc">Hard ceiling on the stitched image. Chrome cannot draw a canvas larger than about 268 megapixels.</p>
+      </div>
+
+      <div class="fs-field fs-field--checkbox">
+        <input type="checkbox" id="opt-showHud">
+        <label for="opt-showHud" data-i18n="options_show_hud">Show progress overlay</label>
+        <p class="fs-field__desc" data-i18n="options_show_hud_desc">Displays an on-page progress indicator with an Escape-to-cancel hint during capture.</p>
+      </div>
+    </fieldset>
+
+    <!-- Output -------------------------------------------------------- -->
+    <fieldset class="fs-fieldset">
+      <legend data-i18n="options_section_output">Output</legend>
+
+      <div class="fs-field">
+        <label for="opt-afterCapture" data-i18n="options_after_capture">After capture</label>
+        <select id="opt-afterCapture">
+          <option value="editor" data-i18n="options_after_capture_editor">Open in editor</option>
+          <option value="download" data-i18n="options_after_capture_download">Download</option>
+          <option value="copy" data-i18n="options_after_capture_copy">Copy to clipboard</option>
+          <option value="download-copy" data-i18n="options_after_capture_download_copy">Download and copy</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_after_capture_desc">What happens once the image exists.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-format" data-i18n="options_format">Format</label>
+        <select id="opt-format">
+          <option value="png" data-i18n="options_format_png">PNG</option>
+          <option value="jpeg" data-i18n="options_format_jpeg">JPEG</option>
+          <option value="webp" data-i18n="options_format_webp">WebP</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_format_desc">Output image encoding.</p>
+      </div>
+
+      <div class="fs-field" id="opt-quality-row">
+        <label for="opt-quality" data-i18n="options_quality">Quality</label>
+        <div class="fs-range">
+          <input type="range" id="opt-quality" min="0.1" max="1" step="0.01">
+          <output id="opt-quality-value" for="opt-quality">92%</output>
+        </div>
+        <p class="fs-field__desc" data-i18n="options_quality_desc">JPEG and WebP only. Higher is sharper and larger.</p>
+      </div>
+
+      <div class="fs-field fs-field--checkbox">
+        <input type="checkbox" id="opt-saveAs">
+        <label for="opt-saveAs" data-i18n="options_save_as">Ask where to save</label>
+        <p class="fs-field__desc" data-i18n="options_save_as_desc">Show the browser's Save dialog instead of dropping the file straight into Downloads.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-filenameTemplate" data-i18n="options_filename_template">Filename template</label>
+        <input type="text" id="opt-filenameTemplate" spellcheck="false" autocomplete="off">
+        <p class="fs-field__desc" data-i18n="options_filename_template_desc">Built from the tokens below. Illegal filename characters are removed automatically.</p>
+        <p class="fs-preview">
+          <span data-i18n="options_filename_template_preview_label">Preview:</span>
+          <code id="opt-filename-preview"></code>
+        </p>
+        <p class="fs-legend-title" data-i18n="options_template_legend">Available tokens</p>
+        <ul class="fs-legend" id="opt-template-legend"></ul>
+      </div>
+    </fieldset>
+
+    <!-- Shortcuts ------------------------------------------------------ -->
+    <fieldset class="fs-fieldset">
+      <legend data-i18n="options_section_shortcuts">Shortcuts</legend>
+
+      <p class="fs-field__desc" data-i18n="options_shortcuts_desc">Keyboard shortcuts are managed by Chrome itself, on a dedicated internal page that extensions are not allowed to open automatically.</p>
+
+      <div class="fs-field">
+        <label for="opt-shortcuts-url" data-i18n="options_shortcuts_url_label">Shortcuts page</label>
+        <div class="fs-copy-row">
+          <input type="text" id="opt-shortcuts-url" readonly>
+          <button type="button" class="fs-btn" id="opt-shortcuts-copy" data-i18n="options_shortcuts_copy">Copy</button>
+        </div>
+      </div>
+
+      <div class="fs-field">
+        <p class="fs-legend-title" data-i18n="options_shortcuts_current_label">Current shortcuts</p>
+        <ul class="fs-shortcut-list" id="opt-shortcut-list"></ul>
+      </div>
+    </fieldset>
+
+    <!-- Advanced -------------------------------------------------------- -->
+    <fieldset class="fs-fieldset">
+      <legend data-i18n="options_section_advanced">Advanced</legend>
+
+      <div class="fs-field">
+        <label for="opt-theme" data-i18n="options_theme">Theme</label>
+        <select id="opt-theme">
+          <option value="system" data-i18n="options_theme_system">Match system</option>
+          <option value="light" data-i18n="options_theme_light">Light</option>
+          <option value="dark" data-i18n="options_theme_dark">Dark</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_theme_desc">Applies to the popup, the options page and the editor.</p>
+      </div>
+
+      <div class="fs-field">
+        <label for="opt-locale" data-i18n="options_locale">Language</label>
+        <select id="opt-locale">
+          <option value="auto" data-i18n="options_locale_auto">Follow Chrome</option>
+          <option value="en" data-i18n="options_locale_en">English</option>
+          <option value="fr" data-i18n="options_locale_fr">Français</option>
+        </select>
+        <p class="fs-field__desc" data-i18n="options_locale_desc">Preferred language for FullShot's own interface.</p>
+      </div>
+
+      <div class="fs-field">
+        <button type="button" class="fs-btn fs-btn--danger" id="opt-reset-btn" data-i18n="options_reset_button">Reset to defaults</button>
+        <div class="fs-reset-confirm" id="opt-reset-confirm" hidden>
+          <p data-i18n="options_reset_confirm_message">Reset every setting to its default value?</p>
+          <button type="button" class="fs-btn fs-btn--danger" id="opt-reset-yes" data-i18n="options_reset_confirm_yes">Yes, reset</button>
+          <button type="button" class="fs-btn" id="opt-reset-no" data-i18n="options_reset_confirm_no">Cancel</button>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- About ------------------------------------------------------------ -->
+    <fieldset class="fs-fieldset">
+      <legend data-i18n="options_section_about">About</legend>
+      <p data-i18n="options_about_privacy">No network requests. No telemetry. No account. Settings are stored locally on this device only.</p>
+      <p class="fs-about-version">
+        <span data-i18n="options_about_version_label">Version</span>
+        <span id="opt-version"></span>
+      </p>
+    </fieldset>
+  </main>
+</div>
+
+<div class="fs-toast" id="fs-toast" role="status" aria-live="polite" hidden></div>
+
+<script src="../shared/protocol.js"></script>
+<script src="../shared/util.js"></script>
+<script src="../shared/settings.js"></script>
+<script src="options.js"></script>
+</body>
+</html>

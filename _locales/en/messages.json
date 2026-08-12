@@ -1,0 +1,566 @@
+{
+  "ext_name": {
+    "message": "FullShot — Full Page Screen Capture",
+    "description": "Extension name, shown in chrome://extensions and the Chrome Web Store."
+  },
+  "ext_description": {
+    "message": "Capture full-page, visible-area or custom-region screenshots — entirely offline, with no account and no network access.",
+    "description": "Extension description, shown in chrome://extensions and the Chrome Web Store."
+  },
+  "action_title": {
+    "message": "Capture with FullShot",
+    "description": "Tooltip shown when hovering the toolbar icon."
+  },
+  "cmd_default": {
+    "message": "Run FullShot's default action",
+    "description": "Description of the _execute_action keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_fullpage": {
+    "message": "Capture the full page",
+    "description": "Description of the capture-fullpage keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_visible": {
+    "message": "Capture the visible area",
+    "description": "Description of the capture-visible keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_region": {
+    "message": "Select an area to capture",
+    "description": "Description of the capture-region keyboard command in chrome://extensions/shortcuts."
+  },
+  "menu_capture_fullpage": {
+    "message": "Capture full page",
+    "description": "Right-click context menu item."
+  },
+  "menu_capture_visible": {
+    "message": "Capture visible area",
+    "description": "Right-click context menu item."
+  },
+  "menu_capture_select": {
+    "message": "Select area to capture",
+    "description": "Right-click context menu item."
+  },
+  "menu_options": {
+    "message": "Options",
+    "description": "Right-click context menu item that opens the options page."
+  },
+  "progress_capturing": {
+    "message": "Capturing…",
+    "description": "On-page HUD label while frames are being captured."
+  },
+  "progress_stitching": {
+    "message": "Stitching…",
+    "description": "On-page HUD label while frames are being combined into one image."
+  },
+  "progress_encoding": {
+    "message": "Encoding…",
+    "description": "On-page HUD label while the final image is being encoded."
+  },
+  "toast_cancelled": {
+    "message": "Capture cancelled",
+    "description": "Toast shown after the user cancels a capture."
+  },
+  "toast_copied": {
+    "message": "Copied to clipboard",
+    "description": "Toast shown after a successful clipboard copy."
+  },
+  "toast_copy_failed": {
+    "message": "Could not copy to clipboard",
+    "description": "Toast shown after a failed clipboard copy."
+  },
+  "toast_saved": {
+    "message": "Image saved",
+    "description": "Toast shown after a successful download."
+  },
+  "hud_cancel_hint": {
+    "message": "Press Esc to cancel",
+    "description": "On-page HUD hint shown during capture."
+  },
+  "hud_title": {
+    "message": "FullShot is capturing this page",
+    "description": "On-page HUD title shown during capture."
+  },
+  "select_hint_element": {
+    "message": "Click an element to capture it",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "select_hint_region": {
+    "message": "Drag to select an area",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "select_hint_keys": {
+    "message": "Enter to confirm, Esc to cancel",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "err_restricted_url": {
+    "message": "This page can't be captured by an extension.",
+    "description": "Error shown when the active tab is a chrome:// or otherwise restricted URL."
+  },
+  "err_no_content_script": {
+    "message": "FullShot couldn't reach this page. Try reloading it.",
+    "description": "Error shown when the content script fails to respond."
+  },
+  "err_capture_failed": {
+    "message": "Capture failed.",
+    "description": "Generic capture failure error."
+  },
+  "err_quota": {
+    "message": "Chrome is throttling captures. Please try again in a moment.",
+    "description": "Error shown when Chrome's captureVisibleTab rate limit is exceeded."
+  },
+  "err_too_large": {
+    "message": "This page is too large to capture in one image.",
+    "description": "Error shown when the page exceeds Chrome's canvas size limit even after downscaling."
+  },
+  "err_cancelled": {
+    "message": "Capture cancelled.",
+    "description": "Error/status code surfaced when the user cancels a capture."
+  },
+  "err_clipboard": {
+    "message": "Couldn't access the clipboard.",
+    "description": "Error shown when every clipboard-write strategy has failed."
+  },
+  "err_empty_selection": {
+    "message": "Selection is too small.",
+    "description": "Error shown when the user confirms a selection smaller than 4×4 pixels."
+  },
+  "err_file_urls": {
+    "message": "Enable \"Allow access to file URLs\" for FullShot in chrome://extensions to capture local files.",
+    "description": "Error shown when capturing a file:// page without the file-access permission enabled."
+  },
+  "editor_save": {
+    "message": "Save",
+    "description": "Editor toolbar button."
+  },
+  "editor_save_as": {
+    "message": "Save as…",
+    "description": "Editor toolbar button / Ctrl+Shift+S action."
+  },
+  "editor_copy": {
+    "message": "Copy",
+    "description": "Editor toolbar button."
+  },
+  "editor_close": {
+    "message": "Close",
+    "description": "Editor toolbar button."
+  },
+  "editor_crop": {
+    "message": "Crop",
+    "description": "Editor tool rail button."
+  },
+  "editor_redact": {
+    "message": "Redact",
+    "description": "Editor tool rail button — draws opaque rectangles baked into the image."
+  },
+  "editor_undo": {
+    "message": "Undo",
+    "description": "Editor tool rail button."
+  },
+  "editor_reset": {
+    "message": "Reset",
+    "description": "Editor tool rail button — restores the original, unedited image."
+  },
+  "editor_cancel": {
+    "message": "Cancel selection",
+    "description": "Editor — discards the pending crop or redact selection without applying it."
+  },
+  "editor_pdf_unavailable": {
+    "message": "PDF export is unavailable",
+    "description": "Editor — tooltip on the disabled PDF option when the PDF writer failed to load."
+  },
+  "editor_save_failed": {
+    "message": "Could not save the image",
+    "description": "Editor toast — encoding or downloading the image failed."
+  },
+  "editor_zoom_in": {
+    "message": "Zoom in",
+    "description": "Editor tool rail button."
+  },
+  "editor_zoom_out": {
+    "message": "Zoom out",
+    "description": "Editor tool rail button."
+  },
+  "editor_zoom_fit": {
+    "message": "Zoom to fit",
+    "description": "Editor tool rail button."
+  },
+  "editor_filename": {
+    "message": "Filename",
+    "description": "Editor header field label."
+  },
+  "editor_format": {
+    "message": "Format",
+    "description": "Editor header field label — PNG/JPEG/WebP/PDF."
+  },
+  "editor_quality": {
+    "message": "Quality",
+    "description": "Editor header field label, shown for JPEG/WebP."
+  },
+  "editor_truncated_warning": {
+    "message": "Image downscaled to fit Chrome's size limit.",
+    "description": "Warning chip shown in the editor status bar when the capture was truncated."
+  },
+  "editor_pdf_page_size": {
+    "message": "Page size",
+    "description": "Editor PDF export option label."
+  },
+  "editor_pdf_fit": {
+    "message": "Fit image",
+    "description": "PDF page size option — one page exactly the size of the image."
+  },
+  "editor_pdf_a4": {
+    "message": "A4",
+    "description": "PDF page size option."
+  },
+  "editor_pdf_letter": {
+    "message": "Letter",
+    "description": "PDF page size option."
+  },
+  "editor_dimensions": {
+    "message": "Dimensions",
+    "description": "Editor status bar label, followed by the image's width × height."
+  },
+  "editor_size": {
+    "message": "File size",
+    "description": "Editor status bar label, followed by the encoded byte size."
+  },
+  "popup_fullpage": {
+    "message": "Full page",
+    "description": "Popup button — captures the whole scrollable page."
+  },
+  "popup_visible": {
+    "message": "Visible area",
+    "description": "Popup button — captures only the current viewport."
+  },
+  "popup_select": {
+    "message": "Select area",
+    "description": "Popup button — opens the on-page selection overlay."
+  },
+  "popup_options": {
+    "message": "Options",
+    "description": "Popup button — opens the options page."
+  },
+  "popup_shortcut_not_set": {
+    "message": "not set",
+    "description": "Shown next to a capture button in the popup or options page when no keyboard shortcut is assigned in chrome://extensions/shortcuts."
+  },
+  "options_section_capture": {
+    "message": "Capture",
+    "description": "Options page section heading."
+  },
+  "options_section_output": {
+    "message": "Output",
+    "description": "Options page section heading."
+  },
+  "options_section_shortcuts": {
+    "message": "Shortcuts",
+    "description": "Options page section heading."
+  },
+  "options_section_advanced": {
+    "message": "Advanced",
+    "description": "Options page section heading."
+  },
+  "options_section_about": {
+    "message": "About",
+    "description": "Options page section heading."
+  },
+  "options_default_action": {
+    "message": "Toolbar click",
+    "description": "Options field label for the defaultAction setting."
+  },
+  "options_default_action_desc": {
+    "message": "What the toolbar icon and Alt+Shift+P do.",
+    "description": "Options field help text for the defaultAction setting."
+  },
+  "options_default_action_menu": {
+    "message": "Ask every time",
+    "description": "defaultAction option value 'menu' — opens the popup to choose a mode."
+  },
+  "options_hide_fixed": {
+    "message": "Fixed & sticky elements",
+    "description": "Options field label for the hideFixed setting."
+  },
+  "options_hide_fixed_desc": {
+    "message": "How sticky headers, cookie banners and chat widgets are handled while stitching.",
+    "description": "Options field help text for the hideFixed setting."
+  },
+  "options_hide_fixed_smart": {
+    "message": "Smart (recommended)",
+    "description": "hideFixed option value 'smart'."
+  },
+  "options_hide_fixed_always": {
+    "message": "Always hide",
+    "description": "hideFixed option value 'always'."
+  },
+  "options_hide_fixed_never": {
+    "message": "Never hide",
+    "description": "hideFixed option value 'never'."
+  },
+  "options_pre_scroll_for_lazy": {
+    "message": "Pre-scroll to load lazy images",
+    "description": "Options checkbox label for the preScrollForLazy setting."
+  },
+  "options_pre_scroll_for_lazy_desc": {
+    "message": "One fast pass down the page before capturing, so lazy-loaded images have time to appear.",
+    "description": "Options field help text for the preScrollForLazy setting."
+  },
+  "options_settle_ms": {
+    "message": "Settle time (ms)",
+    "description": "Options field label for the settleMs setting."
+  },
+  "options_settle_ms_desc": {
+    "message": "Extra wait after each scroll step, in milliseconds. 0 lets FullShot choose automatically.",
+    "description": "Options field help text for the settleMs setting."
+  },
+  "options_scale_mode": {
+    "message": "Resolution",
+    "description": "Options field label for the scaleMode setting."
+  },
+  "options_scale_mode_desc": {
+    "message": "Device keeps the full HiDPI resolution; CSS downsamples to 1×.",
+    "description": "Options field help text for the scaleMode setting."
+  },
+  "options_scale_mode_device": {
+    "message": "Full (device pixels)",
+    "description": "scaleMode option value 'device'."
+  },
+  "options_scale_mode_css": {
+    "message": "Standard (CSS pixels)",
+    "description": "scaleMode option value 'css'."
+  },
+  "options_max_pixels": {
+    "message": "Maximum capture size",
+    "description": "Options field label for the maxPixels setting."
+  },
+  "options_max_pixels_desc": {
+    "message": "Hard ceiling on the stitched image. Chrome cannot draw a canvas larger than about 268 megapixels.",
+    "description": "Options field help text for the maxPixels setting."
+  },
+  "options_max_pixels_standard": {
+    "message": "Standard (≈268 Mpx)",
+    "description": "maxPixels preset — the default budget."
+  },
+  "options_max_pixels_large": {
+    "message": "Large",
+    "description": "maxPixels preset — larger budget, still bounded by Chrome's canvas limit."
+  },
+  "options_max_pixels_maximum": {
+    "message": "Maximum",
+    "description": "maxPixels preset — Chrome's absolute canvas size limit."
+  },
+  "options_show_hud": {
+    "message": "Show progress overlay",
+    "description": "Options checkbox label for the showHud setting."
+  },
+  "options_show_hud_desc": {
+    "message": "Displays an on-page progress indicator with an Escape-to-cancel hint during capture.",
+    "description": "Options field help text for the showHud setting."
+  },
+  "options_after_capture": {
+    "message": "After capture",
+    "description": "Options field label for the afterCapture setting."
+  },
+  "options_after_capture_desc": {
+    "message": "What happens once the image exists.",
+    "description": "Options field help text for the afterCapture setting."
+  },
+  "options_after_capture_editor": {
+    "message": "Open in editor",
+    "description": "afterCapture option value 'editor'."
+  },
+  "options_after_capture_download": {
+    "message": "Download",
+    "description": "afterCapture option value 'download'."
+  },
+  "options_after_capture_copy": {
+    "message": "Copy to clipboard",
+    "description": "afterCapture option value 'copy'."
+  },
+  "options_after_capture_download_copy": {
+    "message": "Download and copy",
+    "description": "afterCapture option value 'download-copy'."
+  },
+  "options_format": {
+    "message": "Format",
+    "description": "Options field label for the format setting."
+  },
+  "options_format_desc": {
+    "message": "Output image encoding.",
+    "description": "Options field help text for the format setting."
+  },
+  "options_format_png": {
+    "message": "PNG",
+    "description": "format option value 'png'."
+  },
+  "options_format_jpeg": {
+    "message": "JPEG",
+    "description": "format option value 'jpeg'."
+  },
+  "options_format_webp": {
+    "message": "WebP",
+    "description": "format option value 'webp'."
+  },
+  "options_quality": {
+    "message": "Quality",
+    "description": "Options field label for the quality setting."
+  },
+  "options_quality_desc": {
+    "message": "JPEG and WebP only. Higher is sharper and larger.",
+    "description": "Options field help text for the quality setting."
+  },
+  "options_save_as": {
+    "message": "Ask where to save",
+    "description": "Options checkbox label for the saveAs setting."
+  },
+  "options_save_as_desc": {
+    "message": "Show the browser's Save dialog instead of dropping the file straight into Downloads.",
+    "description": "Options field help text for the saveAs setting."
+  },
+  "options_filename_template": {
+    "message": "Filename template",
+    "description": "Options field label for the filenameTemplate setting."
+  },
+  "options_filename_template_desc": {
+    "message": "Built from the tokens below. Illegal filename characters are removed automatically.",
+    "description": "Options field help text for the filenameTemplate setting."
+  },
+  "options_filename_template_preview_label": {
+    "message": "Preview:",
+    "description": "Label preceding the live filename preview."
+  },
+  "options_template_legend": {
+    "message": "Available tokens",
+    "description": "Heading over the list of filename template tokens."
+  },
+  "options_template_token_title": {
+    "message": "page title",
+    "description": "Explanation of the {title} filename template token."
+  },
+  "options_template_token_host": {
+    "message": "domain name",
+    "description": "Explanation of the {host} filename template token."
+  },
+  "options_template_token_path": {
+    "message": "URL path",
+    "description": "Explanation of the {path} filename template token."
+  },
+  "options_template_token_date": {
+    "message": "date (YYYY-MM-DD)",
+    "description": "Explanation of the {date} filename template token."
+  },
+  "options_template_token_time": {
+    "message": "time (HH-MM-SS)",
+    "description": "Explanation of the {time} filename template token."
+  },
+  "options_template_token_datetime": {
+    "message": "date and time",
+    "description": "Explanation of the {datetime} filename template token."
+  },
+  "options_template_token_width": {
+    "message": "image width in pixels",
+    "description": "Explanation of the {width} filename template token."
+  },
+  "options_template_token_height": {
+    "message": "image height in pixels",
+    "description": "Explanation of the {height} filename template token."
+  },
+  "options_template_token_mode": {
+    "message": "capture mode",
+    "description": "Explanation of the {mode} filename template token."
+  },
+  "options_template_token_timestamp": {
+    "message": "milliseconds since epoch",
+    "description": "Explanation of the {timestamp} filename template token."
+  },
+  "options_shortcuts_desc": {
+    "message": "Keyboard shortcuts are managed by Chrome itself, on a dedicated internal page that extensions are not allowed to open automatically.",
+    "description": "Explanation shown above the shortcuts page link."
+  },
+  "options_shortcuts_url_label": {
+    "message": "Shortcuts page",
+    "description": "Label for the selectable chrome://extensions/shortcuts text field."
+  },
+  "options_shortcuts_copy": {
+    "message": "Copy",
+    "description": "Button that copies the shortcuts page URL to the clipboard."
+  },
+  "options_shortcuts_copied": {
+    "message": "Copied!",
+    "description": "Toast shown after the shortcuts page URL is copied."
+  },
+  "options_shortcuts_copy_failed": {
+    "message": "Couldn't copy — select and copy the text manually.",
+    "description": "Toast shown when copying the shortcuts page URL fails."
+  },
+  "options_shortcuts_current_label": {
+    "message": "Current shortcuts",
+    "description": "Heading over the list of currently assigned keyboard shortcuts."
+  },
+  "options_theme": {
+    "message": "Theme",
+    "description": "Options field label for the theme setting."
+  },
+  "options_theme_desc": {
+    "message": "Applies to the popup, the options page and the editor.",
+    "description": "Options field help text for the theme setting."
+  },
+  "options_theme_system": {
+    "message": "Match system",
+    "description": "theme option value 'system'."
+  },
+  "options_theme_light": {
+    "message": "Light",
+    "description": "theme option value 'light'."
+  },
+  "options_theme_dark": {
+    "message": "Dark",
+    "description": "theme option value 'dark'."
+  },
+  "options_locale": {
+    "message": "Language",
+    "description": "Options field label for the locale setting."
+  },
+  "options_locale_desc": {
+    "message": "Preferred language for FullShot's own interface.",
+    "description": "Options field help text for the locale setting."
+  },
+  "options_locale_auto": {
+    "message": "Follow Chrome",
+    "description": "locale option value 'auto'."
+  },
+  "options_locale_en": {
+    "message": "English",
+    "description": "locale option value 'en'."
+  },
+  "options_locale_fr": {
+    "message": "Français",
+    "description": "locale option value 'fr'."
+  },
+  "options_reset_button": {
+    "message": "Reset to defaults",
+    "description": "Button that starts the reset-to-defaults confirmation."
+  },
+  "options_reset_confirm_message": {
+    "message": "Reset every setting to its default value?",
+    "description": "Inline confirmation message shown before resetting settings."
+  },
+  "options_reset_confirm_yes": {
+    "message": "Yes, reset",
+    "description": "Confirms the reset-to-defaults action."
+  },
+  "options_reset_confirm_no": {
+    "message": "Cancel",
+    "description": "Cancels the reset-to-defaults action."
+  },
+  "options_reset_done": {
+    "message": "Settings reset to defaults",
+    "description": "Toast shown after settings are reset to defaults."
+  },
+  "options_about_privacy": {
+    "message": "No network requests. No telemetry. No account. Settings are stored locally on this device only.",
+    "description": "Privacy statement shown in the About section."
+  },
+  "options_about_version_label": {
+    "message": "Version",
+    "description": "Label preceding the extension's version number, read from the manifest."
+  }
+}

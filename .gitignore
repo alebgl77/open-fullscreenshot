@@ -1,0 +1,39 @@
+# Credentials — nothing of the sort exists in this repo today, and these rules
+# are here so it stays that way. Chrome's "Pack extension" drops a CRX signing
+# key next to the folder; committing one would hand over the extension identity.
+*.pem
+*.key
+*.p12
+*.pfx
+*.crx
+.env
+.env.*
+*.keystore
+
+# Build output
+dist/
+
+# Stitched captures written by test/pipeline.mjs
+test/out/
+
+# Dependencies (none are used at runtime; this is here in case a future
+# contributor adds a dev-only tool)
+node_modules/
+
+# OS cruft
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor cruft
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Logs
+*.log

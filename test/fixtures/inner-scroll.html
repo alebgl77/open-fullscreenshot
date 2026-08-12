@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FullShot fixture — app shell with an inner scroll container</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }   /* body does NOT scroll */
+  body { font: 15px/1.6 system-ui, "Segoe UI", Roboto, sans-serif; color: #16181d; }
+  .shell { display: grid; grid-template-columns: 240px 1fr; height: 100%; }
+  aside { background: #16181d; color: #cfd6e4; padding: 20px; }
+  aside h1 { font-size: 16px; margin: 0 0 20px; color: #fff; }
+  aside a { display: block; padding: 8px 10px; border-radius: 6px; color: inherit;
+            text-decoration: none; font-size: 14px; }
+  aside a.on { background: #2f6feb; color: #fff; }
+
+  /* The real scroller: a nested element, not the document. */
+  .feed { overflow-y: auto; padding: 0 32px 64px; }
+  .feed header { position: sticky; top: 0; background: #fffffff2; padding: 18px 0;
+                 border-bottom: 1px solid #e2e6ec; font-weight: 700; }
+  .card { border: 1px solid #e2e6ec; border-radius: 12px; padding: 20px; margin: 20px 0;
+          min-height: 300px; }
+  .marker { font: 700 12px/1 ui-monospace, Consolas, monospace; color: #fff;
+            background: #7c3aed; padding: 5px 9px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <h1>App shell</h1>
+    <a class="on" href="#">Feed</a><a href="#">Reports</a><a href="#">Settings</a>
+  </aside>
+  <div class="feed">
+    <header>Inner scroll container — document.scrollingElement does not scroll here</header>
+    <div class="card"><span class="marker">INNER 01</span><p>The capture engine must detect that
+      <code>document.scrollingElement.scrollHeight</code> equals its client height, then fall back to
+      the largest scrollable descendant covering most of the viewport — this element.</p></div>
+    <div class="card"><span class="marker">INNER 02</span></div>
+    <div class="card"><span class="marker">INNER 03</span></div>
+    <div class="card"><span class="marker">INNER 04</span></div>
+    <div class="card"><span class="marker">INNER 05</span></div>
+    <div class="card"><span class="marker">INNER 06</span></div>
+    <div class="card"><span class="marker">INNER 07</span></div>
+    <div class="card"><span class="marker">INNER 08 — last</span><p>If only the first viewport is
+      captured, scroller detection failed.</p></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title data-i18n="ext_name">FullShot</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="editor.css">
+  <script src="../shared/protocol.js" defer></script>
+  <script src="../shared/util.js" defer></script>
+  <script src="../shared/settings.js" defer></script>
+  <script src="../lib/pdf.js" defer></script>
+  <script src="editor.js" defer></script>
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="header">
+      <div class="header-group header-left">
+        <label class="visually-hidden" for="filename-input" data-i18n="editor_filename">Filename</label>
+        <input id="filename-input" type="text" class="filename-input" autocomplete="off" spellcheck="false"
+               data-i18n-attr="aria-label:editor_filename">
+      </div>
+
+      <div class="header-group header-center">
+        <label class="visually-hidden" for="format-select" data-i18n="editor_format">Format</label>
+        <select id="format-select" class="format-select" data-i18n-attr="aria-label:editor_format">
+          <option value="png">PNG</option>
+          <option value="jpeg">JPEG</option>
+          <option value="webp">WebP</option>
+          <option value="pdf">PDF</option>
+        </select>
+
+        <div id="quality-group" class="control-group" hidden>
+          <label class="visually-hidden" for="quality-input" data-i18n="editor_quality">Quality</label>
+          <input id="quality-input" type="range" min="10" max="100" step="1" class="quality-input"
+                 data-i18n-attr="aria-label:editor_quality">
+          <span id="quality-value" class="control-value"></span>
+        </div>
+
+        <div id="pdf-group" class="control-group" hidden>
+          <label class="visually-hidden" for="pdf-pagesize-select" data-i18n="editor_pdf_page_size">Page size</label>
+          <select id="pdf-pagesize-select" class="pdf-select" data-i18n-attr="aria-label:editor_pdf_page_size">
+            <option value="fit" data-i18n="editor_pdf_fit">Fit</option>
+            <option value="a4" data-i18n="editor_pdf_a4">A4</option>
+            <option value="letter" data-i18n="editor_pdf_letter">Letter</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="header-group header-right">
+        <div class="split-button">
+          <button id="save-btn" type="button" class="fs-btn fs-btn--primary" data-i18n="editor_save">Save</button>
+          <button id="save-as-btn" type="button" class="fs-btn fs-btn--primary btn-caret"
+                  data-i18n-attr="aria-label:editor_save_as;title:editor_save_as">
+            <svg viewBox="0 0 16 16" width="10" height="10" aria-hidden="true" focusable="false">
+              <path d="M2 5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <button id="copy-btn" type="button" class="fs-btn btn-icon"
+                data-i18n-attr="aria-label:editor_copy;title:editor_copy">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+            <rect x="7" y="7" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <rect x="3" y="3" width="10" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+        </button>
+        <button id="close-btn" type="button" class="fs-btn btn-icon"
+                data-i18n-attr="aria-label:editor_close;title:editor_close">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+            <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="rail" class="rail" role="toolbar">
+      <button id="crop-btn" type="button" class="fs-btn tool-btn" aria-pressed="false"
+              data-i18n-attr="aria-label:editor_crop;title:editor_crop">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M6 2v12a1 1 0 0 0 1 1h11M2 6h12a1 1 0 0 1 1 1v11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button id="redact-btn" type="button" class="fs-btn tool-btn" aria-pressed="false"
+              data-i18n-attr="aria-label:editor_redact;title:editor_redact">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <rect x="3" y="6" width="14" height="8" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <div class="rail-sep" role="separator" aria-hidden="true"></div>
+
+      <button id="undo-btn" type="button" class="fs-btn tool-btn" disabled
+              data-i18n-attr="aria-label:editor_undo;title:editor_undo">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M8 4 3 9l5 5M3 9h9a5 5 0 0 1 0 10h-1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button id="reset-btn" type="button" class="fs-btn tool-btn" disabled
+              data-i18n-attr="aria-label:editor_reset;title:editor_reset">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M10 3a7 7 0 1 1-6.32 4M4 3v4h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="rail-sep" role="separator" aria-hidden="true"></div>
+
+      <button id="zoom-out-btn" type="button" class="fs-btn tool-btn"
+              data-i18n-attr="aria-label:editor_zoom_out;title:editor_zoom_out">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M6.5 9h5M14 14l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <span id="zoom-level" class="zoom-level"></span>
+      <button id="zoom-in-btn" type="button" class="fs-btn tool-btn"
+              data-i18n-attr="aria-label:editor_zoom_in;title:editor_zoom_in">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M9 6.5v5M6.5 9h5M14 14l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button id="zoom-fit-btn" type="button" class="fs-btn tool-btn"
+              data-i18n-attr="aria-label:editor_zoom_fit;title:editor_zoom_fit">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M3 7V4a1 1 0 0 1 1-1h3M17 7V4a1 1 0 0 0-1-1h-3M3 13v3a1 1 0 0 0 1 1h3M17 13v3a1 1 0 0 1-1 1h-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <main id="viewport" class="viewport" tabindex="0" data-tool="none">
+      <div id="canvas-wrap" class="canvas-wrap">
+        <canvas id="stage" class="stage" draggable="true"></canvas>
+        <div id="selection-box" class="selection-box" hidden></div>
+      </div>
+      <div id="crop-confirm" class="crop-confirm" hidden>
+        <button id="crop-confirm-btn" type="button" class="mini-btn mini-btn-ok"
+                data-i18n-attr="aria-label:editor_crop;title:editor_crop">
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M4 10l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button id="crop-cancel-btn" type="button" class="mini-btn mini-btn-cancel"
+                data-i18n-attr="aria-label:editor_cancel;title:editor_cancel">
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <footer class="statusbar">
+      <span id="status-dimensions" class="status-item"></span>
+      <span id="status-size" class="status-item"></span>
+      <span id="status-url" class="status-item status-url"></span>
+      <span id="status-truncated" class="status-chip" hidden>
+        <svg viewBox="0 0 20 20" width="12" height="12" aria-hidden="true" focusable="false">
+          <path d="M10 3l8 14H2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M10 8v4M10 14.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="editor_truncated_warning">Downscaled to fit Chrome's canvas limit</span>
+      </span>
+    </footer>
+  </div>
+
+  <div id="empty-state" class="empty-state" hidden>
+    <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" focusable="false">
+      <rect x="4" y="8" width="40" height="30" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 30l10-10 8 8 8-10 14 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 6l36 36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <p id="empty-state-message" data-i18n="err_capture_failed"></p>
+    <button id="empty-close-btn" type="button" class="fs-btn fs-btn--primary" data-i18n="editor_close">Close</button>
+  </div>
+
+  <div id="toast" class="fs-toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

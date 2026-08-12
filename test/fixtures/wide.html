@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FullShot fixture — wide document (horizontal + vertical tiling)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.6 system-ui, "Segoe UI", Roboto, sans-serif; }
+  .grid { display: grid; grid-template-columns: repeat(8, 420px); grid-auto-rows: 520px; }
+  .cell { border: 1px solid #d7dce4; display: grid; place-items: center; font: 700 22px ui-monospace, Consolas, monospace; }
+  .cell:nth-child(odd) { background: #f4f6fa; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="cell">R1C1</div><div class="cell">R1C2</div><div class="cell">R1C3</div><div class="cell">R1C4</div>
+  <div class="cell">R1C5</div><div class="cell">R1C6</div><div class="cell">R1C7</div><div class="cell">R1C8</div>
+  <div class="cell">R2C1</div><div class="cell">R2C2</div><div class="cell">R2C3</div><div class="cell">R2C4</div>
+  <div class="cell">R2C5</div><div class="cell">R2C6</div><div class="cell">R2C7</div><div class="cell">R2C8</div>
+  <div class="cell">R3C1</div><div class="cell">R3C2</div><div class="cell">R3C3</div><div class="cell">R3C4</div>
+  <div class="cell">R3C5</div><div class="cell">R3C6</div><div class="cell">R3C7</div><div class="cell">R3C8</div>
+  <div class="cell">R4C1</div><div class="cell">R4C2</div><div class="cell">R4C3</div><div class="cell">R4C4</div>
+  <div class="cell">R4C5</div><div class="cell">R4C6</div><div class="cell">R4C7</div><div class="cell">R4C8</div>
+</div>
+</body>
+</html>

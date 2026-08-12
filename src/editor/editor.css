@@ -1,0 +1,345 @@
+/*
+ * FullShot — editor page styles.
+ *
+ * Loaded after src/shared/theme.css: relies on it for the design tokens
+ * (--fs-*), the base layer (box-sizing, focus rings, reduced-motion) and the
+ * shared .fs-btn / .fs-toast components. Only page-specific layout and the
+ * editor's own controls live here. Colour always goes through a --fs-x
+ * token, with a literal fallback for resilience if theme.css fails to load.
+ */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 900px;
+}
+
+/* -------------------------------------------------------------------------
+ * Header
+ * ---------------------------------------------------------------------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--fs-border, #d9dce1);
+  background: var(--fs-bg-elev, #fff);
+  flex-wrap: wrap;
+}
+
+.header-left {
+  flex: 1 1 220px;
+  min-width: 160px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.filename-input {
+  width: 100%;
+  font: inherit;
+  color: var(--fs-text, #1b1e24);
+  background: var(--fs-surface, #fff);
+  border: 1px solid var(--fs-border, #d9dce1);
+  border-radius: var(--fs-radius-sm, 6px);
+  padding: 8px 10px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.format-select,
+.pdf-select {
+  font: inherit;
+  color: var(--fs-text, #1b1e24);
+  background: var(--fs-surface, #fff);
+  border: 1px solid var(--fs-border, #d9dce1);
+  border-radius: var(--fs-radius-sm, 6px);
+  padding: 7px 10px;
+}
+
+.quality-input {
+  accent-color: var(--fs-accent, #2563eb);
+}
+
+.control-value {
+  min-width: 3.4em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fs-text-dim, #6b7280);
+  font-size: 12px;
+}
+
+/* -------------------------------------------------------------------------
+ * Buttons — every button also carries the shared .fs-btn class from
+ * theme.css (border, hover, active, disabled, transition). These rules only
+ * add editor-specific sizing on top of it.
+ * ---------------------------------------------------------------------- */
+
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+.split-button {
+  display: flex;
+}
+
+.split-button .fs-btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-caret {
+  width: 22px;
+  padding: 0;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Tool rail
+ * ---------------------------------------------------------------------- */
+
+.rail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--fs-border, #d9dce1);
+  background: var(--fs-bg-elev, #fff);
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+.tool-btn[aria-pressed='true'] {
+  background: var(--fs-accent, #2563eb);
+  border-color: var(--fs-accent, #2563eb);
+  color: var(--fs-accent-text, #fff);
+}
+
+.rail-sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 4px 4px;
+  background: var(--fs-border, #d9dce1);
+}
+
+.zoom-level {
+  min-width: 46px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--fs-text-dim, #6b7280);
+}
+
+/* -------------------------------------------------------------------------
+ * Canvas area
+ * ---------------------------------------------------------------------- */
+
+.viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: var(--fs-bg, #f4f5f7);
+  cursor: grab;
+}
+
+.viewport[data-tool='crop'],
+.viewport[data-tool='redact'] {
+  cursor: crosshair;
+}
+
+.viewport.panning {
+  cursor: grabbing;
+}
+
+.canvas-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  background-color: var(--fs-bg-elev, #fff);
+  background-image: linear-gradient(45deg, var(--fs-border, #d9dce1) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--fs-border, #d9dce1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--fs-border, #d9dce1) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--fs-border, #d9dce1) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+.stage {
+  display: block;
+  image-rendering: auto;
+}
+
+.stage.pixelated {
+  image-rendering: pixelated;
+}
+
+.selection-box {
+  position: absolute;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.selection-box.crop {
+  border: 2px dashed var(--fs-accent, #2563eb);
+}
+
+.selection-box.redact {
+  border: 2px solid var(--fs-danger, #dc2626);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.crop-confirm {
+  position: absolute;
+  display: flex;
+  gap: 6px;
+  padding: 3px;
+  border-radius: var(--fs-radius-sm, 6px);
+  background: var(--fs-surface, #fff);
+  border: 1px solid var(--fs-border, #d9dce1);
+  box-shadow: var(--fs-shadow, 0 4px 16px rgba(15, 23, 42, 0.14));
+  z-index: 2;
+}
+
+.mini-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--fs-accent-text, #fff);
+}
+
+.mini-btn-ok {
+  background: var(--fs-ok, #16a34a);
+}
+
+.mini-btn-cancel {
+  background: var(--fs-danger, #dc2626);
+}
+
+/* -------------------------------------------------------------------------
+ * Status bar
+ * ---------------------------------------------------------------------- */
+
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--fs-border, #d9dce1);
+  background: var(--fs-bg-elev, #fff);
+  font-size: 12px;
+  color: var(--fs-text-dim, #6b7280);
+}
+
+.status-item {
+  white-space: nowrap;
+}
+
+.status-url {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--fs-danger, #dc2626);
+  color: var(--fs-danger, #dc2626);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------
+ * Empty state
+ * ---------------------------------------------------------------------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--fs-text-dim, #6b7280);
+}
+
+/* -------------------------------------------------------------------------
+ * Toast — extends the shared .fs-toast component.
+ * ---------------------------------------------------------------------- */
+
+.toast-error {
+  border-color: var(--fs-danger, #dc2626);
+  color: var(--fs-danger, #dc2626);
+}
+
+/* -------------------------------------------------------------------------
+ * Responsive down to ~900px
+ * ---------------------------------------------------------------------- */
+
+@media (max-width: 960px) {
+  .header {
+    gap: 8px;
+  }
+  .status-url {
+    display: none;
+  }
+}

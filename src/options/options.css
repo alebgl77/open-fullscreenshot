@@ -1,0 +1,235 @@
+/* FullShot — options page layout. Loaded after ../shared/theme.css. */
+
+body {
+  background: var(--fs-bg);
+}
+
+.fs-options {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.fs-options__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.fs-options__logo {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  color: var(--fs-accent);
+  flex: 0 0 auto;
+}
+
+.fs-options__logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fs-options__header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.fs-options__main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fs-fieldset {
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius);
+  background: var(--fs-surface);
+  padding: 16px 18px 6px;
+  margin: 0;
+}
+
+.fs-fieldset legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fs-text-dim);
+}
+
+.fs-fieldset > p {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--fs-text);
+}
+
+.fs-field--checkbox {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.fs-field--checkbox input[type='checkbox'] {
+  grid-row: 1;
+  grid-column: 1;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fs-accent);
+}
+
+.fs-field--checkbox label {
+  grid-row: 1;
+  grid-column: 2;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.fs-field--checkbox .fs-field__desc {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.fs-field--disabled .fs-field__desc {
+  opacity: 0.6;
+}
+
+.fs-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fs-range input[type='range'] {
+  flex: 1 1 auto;
+  padding: 0;
+  accent-color: var(--fs-accent);
+}
+
+.fs-range output {
+  flex: 0 0 auto;
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fs-text-dim);
+  font-size: 12px;
+}
+
+.fs-preview {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fs-text-dim);
+}
+
+.fs-preview code {
+  color: var(--fs-text);
+  background: var(--fs-bg-elev);
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-sm);
+  padding: 2px 6px;
+}
+
+.fs-legend-title {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fs-text-dim);
+}
+
+.fs-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+  font-size: 12px;
+  color: var(--fs-text-dim);
+}
+
+.fs-legend code {
+  color: var(--fs-text);
+  background: var(--fs-bg-elev);
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-sm);
+  padding: 1px 5px;
+}
+
+.fs-copy-row {
+  display: flex;
+  gap: 8px;
+}
+
+.fs-copy-row input {
+  flex: 1 1 auto;
+}
+
+.fs-shortcut-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.fs-shortcut-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--fs-border);
+}
+
+.fs-shortcut-list li:last-child {
+  border-bottom: none;
+}
+
+.fs-shortcut-list .fs-shortcut-key {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--fs-text-dim);
+  background: var(--fs-bg-elev);
+  border: 1px solid var(--fs-border);
+  border-radius: var(--fs-radius-sm);
+  padding: 3px 7px;
+  white-space: nowrap;
+}
+
+.fs-shortcut-list .fs-shortcut-key--unset {
+  font-style: italic;
+}
+
+.fs-reset-confirm {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--fs-danger);
+  border-radius: var(--fs-radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fs-reset-confirm p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.fs-reset-confirm .fs-btn + .fs-btn {
+  margin-left: 8px;
+}
+
+.fs-about-version {
+  font-size: 13px;
+  color: var(--fs-text-dim);
+}
+
+.fs-about-version span:first-child {
+  font-weight: 600;
+  color: var(--fs-text);
+  margin-right: 4px;
+}

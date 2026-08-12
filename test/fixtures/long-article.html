@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FullShot fixture — long article with sticky header, cookie bar and lazy images</title>
+<style>
+  :root { --ink:#16181d; --dim:#5b6472; --line:#e2e6ec; --accent:#2f6feb; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }        /* the engine must defeat this */
+  body {
+    margin: 0; font: 16px/1.65 system-ui, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink); background: #fff;
+  }
+
+  /* --- sticky header: must appear ONCE, at the top of the stitched image --- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 28px; background: #fffffff2; backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  header .brand { font-weight: 700; letter-spacing: -.01em; }
+  header nav { margin-left: auto; display: flex; gap: 18px; color: var(--dim); font-size: 14px; }
+
+  /* --- fixed chat bubble: must NOT be baked into the middle of the image --- */
+  .chat {
+    position: fixed; right: 24px; bottom: 96px; z-index: 60;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); color: #fff; display: grid; place-items: center;
+    box-shadow: 0 8px 24px #2f6feb55; font-size: 22px;
+  }
+
+  /* --- bottom-anchored cookie bar: must be dropped, not stamped mid-page --- */
+  .cookies {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 28px; background: #16181d; color: #fff; font-size: 14px;
+  }
+  .cookies button { margin-left: auto; padding: 8px 16px; border: 0; border-radius: 6px;
+    background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+
+  main { max-width: 760px; margin: 0 auto; padding: 48px 24px 160px; }
+  h1 { font-size: 42px; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 12px; }
+  .lede { font-size: 20px; color: var(--dim); margin: 0 0 40px; }
+  section { min-height: 720px; padding-top: 24px; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: 0; }
+  h2 { font-size: 26px; letter-spacing: -.01em; margin: 32px 0 12px; }
+  figure { margin: 28px 0; }
+  img { width: 100%; height: 260px; object-fit: cover; border-radius: 10px; display: block; background: #eef1f6; }
+  figcaption { color: var(--dim); font-size: 13px; margin-top: 8px; }
+  .marker { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff;
+    background: var(--accent); padding: 6px 10px; border-radius: 999px; display: inline-block; }
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Fixture Press</span>
+  <nav><span>Sections</span><span>Archive</span><span>About</span></nav>
+</header>
+
+<div class="chat" aria-hidden="true">💬</div>
+
+<div class="cookies">
+  <span>We use cookies. This bar is fixed to the bottom of the viewport.</span>
+  <button type="button">Accept</button>
+</div>
+
+<main>
+  <h1>A long article that scrolls for about eight viewports</h1>
+  <p class="lede">Each numbered marker below must appear exactly once, in order, in the stitched
+  capture. A duplicated or missing marker means a tiling bug.</p>
+
+  <section><span class="marker">MARKER 01 — top</span>
+    <h2>Opening</h2>
+    <p>The sticky header above should be captured a single time, at the very top of the
+    resulting image. If it repeats every viewport, the fixed-element policy is not being applied
+    after the first frame.</p>
+    <figure>
+      <img loading="lazy" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='260'%3E%3Crect width='800' height='260' fill='%232f6feb'/%3E%3Ctext x='400' y='140' font-family='sans-serif' font-size='34' fill='white' text-anchor='middle'%3Elazy image 1%3C/text%3E%3C/svg%3E">
+      <figcaption>Lazy image 1 — loaded only once scrolled into view.</figcaption>
+    </figure>
+  </section>
+
+  <section><span class="marker">MARKER 02</span>
+    <h2>Second screenful</h2>
+    <p>Smooth scrolling is enabled on this document on purpose. The capture engine must force
+    <code>scroll-behavior: auto</code>, otherwise frames are taken mid-animation and the stitch
+    tears.</p>
+  </section>
+
+  <section><span class="marker">MARKER 03</span>
+    <h2>Third screenful</h2>
+    <figure>
+      <img loading="lazy" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='260'%3E%3Crect width='800' height='260' fill='%2310a37f'/%3E%3Ctext x='400' y='140' font-family='sans-serif' font-size='34' fill='white' text-anchor='middle'%3Elazy image 2%3C/text%3E%3C/svg%3E">
+      <figcaption>Lazy image 2.</figcaption>
+    </figure>
+  </section>
+
+  <section><span class="marker">MARKER 04</span><h2>Fourth screenful</h2>
+    <p>Nothing special here — this section exists to make the document long enough that the
+    capture needs many tiles and therefore trips any rate limit on captureVisibleTab.</p></section>
+
+  <section><span class="marker">MARKER 05</span><h2>Fifth screenful</h2>
+    <figure>
+      <img loading="lazy" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='260'%3E%3Crect width='800' height='260' fill='%23e5484d'/%3E%3Ctext x='400' y='140' font-family='sans-serif' font-size='34' fill='white' text-anchor='middle'%3Elazy image 3%3C/text%3E%3C/svg%3E">
+      <figcaption>Lazy image 3 — sits deep enough that it only loads after the pre-scroll pass.</figcaption>
+    </figure></section>
+
+  <section><span class="marker">MARKER 06</span><h2>Sixth screenful</h2></section>
+  <section><span class="marker">MARKER 07</span><h2>Seventh screenful</h2></section>
+  <section><span class="marker">MARKER 08</span><h2>Eighth screenful</h2></section>
+  <section><span class="marker">MARKER 09</span><h2>Ninth screenful</h2></section>
+  <section><span class="marker">MARKER 10 — bottom</span>
+    <h2>End of the document</h2>
+    <p>The final frame is clamped by the browser: scrolling to the requested offset lands short,
+    so the engine must place this frame using the ACTUAL scroll position it read back, not the
+    one it asked for.</p></section>
+</main>
+</body>
+</html>

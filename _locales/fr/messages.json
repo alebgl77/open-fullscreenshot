@@ -1,0 +1,566 @@
+{
+  "ext_name": {
+    "message": "FullShot — Capture d'écran pleine page",
+    "description": "Extension name, shown in chrome://extensions and the Chrome Web Store."
+  },
+  "ext_description": {
+    "message": "Capturez des pages entières, la zone visible ou une région personnalisée — entièrement hors ligne, sans compte ni accès réseau.",
+    "description": "Extension description, shown in chrome://extensions and the Chrome Web Store."
+  },
+  "action_title": {
+    "message": "Capturer avec FullShot",
+    "description": "Tooltip shown when hovering the toolbar icon."
+  },
+  "cmd_default": {
+    "message": "Exécuter l'action par défaut de FullShot",
+    "description": "Description of the _execute_action keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_fullpage": {
+    "message": "Capturer la page entière",
+    "description": "Description of the capture-fullpage keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_visible": {
+    "message": "Capturer la zone visible",
+    "description": "Description of the capture-visible keyboard command in chrome://extensions/shortcuts."
+  },
+  "cmd_region": {
+    "message": "Sélectionner une zone à capturer",
+    "description": "Description of the capture-region keyboard command in chrome://extensions/shortcuts."
+  },
+  "menu_capture_fullpage": {
+    "message": "Capturer la page entière",
+    "description": "Right-click context menu item."
+  },
+  "menu_capture_visible": {
+    "message": "Capturer la zone visible",
+    "description": "Right-click context menu item."
+  },
+  "menu_capture_select": {
+    "message": "Sélectionner une zone à capturer",
+    "description": "Right-click context menu item."
+  },
+  "menu_options": {
+    "message": "Options",
+    "description": "Right-click context menu item that opens the options page."
+  },
+  "progress_capturing": {
+    "message": "Capture en cours…",
+    "description": "On-page HUD label while frames are being captured."
+  },
+  "progress_stitching": {
+    "message": "Assemblage en cours…",
+    "description": "On-page HUD label while frames are being combined into one image."
+  },
+  "progress_encoding": {
+    "message": "Encodage en cours…",
+    "description": "On-page HUD label while the final image is being encoded."
+  },
+  "toast_cancelled": {
+    "message": "Capture annulée",
+    "description": "Toast shown after the user cancels a capture."
+  },
+  "toast_copied": {
+    "message": "Copié dans le presse-papiers",
+    "description": "Toast shown after a successful clipboard copy."
+  },
+  "toast_copy_failed": {
+    "message": "Impossible de copier dans le presse-papiers",
+    "description": "Toast shown after a failed clipboard copy."
+  },
+  "toast_saved": {
+    "message": "Image enregistrée",
+    "description": "Toast shown after a successful download."
+  },
+  "hud_cancel_hint": {
+    "message": "Appuyez sur Échap pour annuler",
+    "description": "On-page HUD hint shown during capture."
+  },
+  "hud_title": {
+    "message": "FullShot capture cette page",
+    "description": "On-page HUD title shown during capture."
+  },
+  "select_hint_element": {
+    "message": "Cliquez sur un élément pour le capturer",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "select_hint_region": {
+    "message": "Faites glisser pour sélectionner une zone",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "select_hint_keys": {
+    "message": "Entrée pour confirmer, Échap pour annuler",
+    "description": "On-page hint shown by the selection overlay."
+  },
+  "err_restricted_url": {
+    "message": "Cette page ne peut pas être capturée par une extension.",
+    "description": "Error shown when the active tab is a chrome:// or otherwise restricted URL."
+  },
+  "err_no_content_script": {
+    "message": "FullShot n'a pas pu accéder à cette page. Essayez de la recharger.",
+    "description": "Error shown when the content script fails to respond."
+  },
+  "err_capture_failed": {
+    "message": "Échec de la capture.",
+    "description": "Generic capture failure error."
+  },
+  "err_quota": {
+    "message": "Chrome limite temporairement les captures. Réessayez dans un instant.",
+    "description": "Error shown when Chrome's captureVisibleTab rate limit is exceeded."
+  },
+  "err_too_large": {
+    "message": "Cette page est trop grande pour être capturée en une seule image.",
+    "description": "Error shown when the page exceeds Chrome's canvas size limit even after downscaling."
+  },
+  "err_cancelled": {
+    "message": "Capture annulée.",
+    "description": "Error/status code surfaced when the user cancels a capture."
+  },
+  "err_clipboard": {
+    "message": "Impossible d'accéder au presse-papiers.",
+    "description": "Error shown when every clipboard-write strategy has failed."
+  },
+  "err_empty_selection": {
+    "message": "La sélection est trop petite.",
+    "description": "Error shown when the user confirms a selection smaller than 4×4 pixels."
+  },
+  "err_file_urls": {
+    "message": "Activez « Autoriser l'accès aux URL de fichiers » pour FullShot dans chrome://extensions pour capturer des fichiers locaux.",
+    "description": "Error shown when capturing a file:// page without the file-access permission enabled."
+  },
+  "editor_save": {
+    "message": "Enregistrer",
+    "description": "Editor toolbar button."
+  },
+  "editor_save_as": {
+    "message": "Enregistrer sous…",
+    "description": "Editor toolbar button / Ctrl+Shift+S action."
+  },
+  "editor_copy": {
+    "message": "Copier",
+    "description": "Editor toolbar button."
+  },
+  "editor_close": {
+    "message": "Fermer",
+    "description": "Editor toolbar button."
+  },
+  "editor_crop": {
+    "message": "Rogner",
+    "description": "Editor tool rail button."
+  },
+  "editor_redact": {
+    "message": "Masquer",
+    "description": "Editor tool rail button — draws opaque rectangles baked into the image."
+  },
+  "editor_undo": {
+    "message": "Annuler",
+    "description": "Editor tool rail button."
+  },
+  "editor_reset": {
+    "message": "Réinitialiser",
+    "description": "Editor tool rail button — restores the original, unedited image."
+  },
+  "editor_cancel": {
+    "message": "Annuler la sélection",
+    "description": "Editor — discards the pending crop or redact selection without applying it."
+  },
+  "editor_pdf_unavailable": {
+    "message": "Export PDF indisponible",
+    "description": "Editor — tooltip on the disabled PDF option when the PDF writer failed to load."
+  },
+  "editor_save_failed": {
+    "message": "Impossible d'enregistrer l'image",
+    "description": "Editor toast — encoding or downloading the image failed."
+  },
+  "editor_zoom_in": {
+    "message": "Zoomer",
+    "description": "Editor tool rail button."
+  },
+  "editor_zoom_out": {
+    "message": "Dézoomer",
+    "description": "Editor tool rail button."
+  },
+  "editor_zoom_fit": {
+    "message": "Ajuster au cadre",
+    "description": "Editor tool rail button."
+  },
+  "editor_filename": {
+    "message": "Nom du fichier",
+    "description": "Editor header field label."
+  },
+  "editor_format": {
+    "message": "Format",
+    "description": "Editor header field label — PNG/JPEG/WebP/PDF."
+  },
+  "editor_quality": {
+    "message": "Qualité",
+    "description": "Editor header field label, shown for JPEG/WebP."
+  },
+  "editor_truncated_warning": {
+    "message": "Image réduite pour respecter la limite de taille de Chrome.",
+    "description": "Warning chip shown in the editor status bar when the capture was truncated."
+  },
+  "editor_pdf_page_size": {
+    "message": "Format de page",
+    "description": "Editor PDF export option label."
+  },
+  "editor_pdf_fit": {
+    "message": "Ajusté à l'image",
+    "description": "PDF page size option — one page exactly the size of the image."
+  },
+  "editor_pdf_a4": {
+    "message": "A4",
+    "description": "PDF page size option."
+  },
+  "editor_pdf_letter": {
+    "message": "Letter",
+    "description": "PDF page size option."
+  },
+  "editor_dimensions": {
+    "message": "Dimensions",
+    "description": "Editor status bar label, followed by the image's width × height."
+  },
+  "editor_size": {
+    "message": "Taille du fichier",
+    "description": "Editor status bar label, followed by the encoded byte size."
+  },
+  "popup_fullpage": {
+    "message": "Page entière",
+    "description": "Popup button — captures the whole scrollable page."
+  },
+  "popup_visible": {
+    "message": "Zone visible",
+    "description": "Popup button — captures only the current viewport."
+  },
+  "popup_select": {
+    "message": "Sélectionner une zone",
+    "description": "Popup button — opens the on-page selection overlay."
+  },
+  "popup_options": {
+    "message": "Options",
+    "description": "Popup button — opens the options page."
+  },
+  "popup_shortcut_not_set": {
+    "message": "non défini",
+    "description": "Shown next to a capture button in the popup or options page when no keyboard shortcut is assigned in chrome://extensions/shortcuts."
+  },
+  "options_section_capture": {
+    "message": "Capture",
+    "description": "Options page section heading."
+  },
+  "options_section_output": {
+    "message": "Sortie",
+    "description": "Options page section heading."
+  },
+  "options_section_shortcuts": {
+    "message": "Raccourcis",
+    "description": "Options page section heading."
+  },
+  "options_section_advanced": {
+    "message": "Avancé",
+    "description": "Options page section heading."
+  },
+  "options_section_about": {
+    "message": "À propos",
+    "description": "Options page section heading."
+  },
+  "options_default_action": {
+    "message": "Clic sur la barre d'outils",
+    "description": "Options field label for the defaultAction setting."
+  },
+  "options_default_action_desc": {
+    "message": "Ce que déclenchent l'icône de la barre d'outils et Alt+Maj+P.",
+    "description": "Options field help text for the defaultAction setting."
+  },
+  "options_default_action_menu": {
+    "message": "Demander à chaque fois",
+    "description": "defaultAction option value 'menu' — opens the popup to choose a mode."
+  },
+  "options_hide_fixed": {
+    "message": "Éléments fixes et collants",
+    "description": "Options field label for the hideFixed setting."
+  },
+  "options_hide_fixed_desc": {
+    "message": "Comment les en-têtes collants, bandeaux de cookies et widgets de chat sont gérés pendant l'assemblage.",
+    "description": "Options field help text for the hideFixed setting."
+  },
+  "options_hide_fixed_smart": {
+    "message": "Intelligent (recommandé)",
+    "description": "hideFixed option value 'smart'."
+  },
+  "options_hide_fixed_always": {
+    "message": "Toujours masquer",
+    "description": "hideFixed option value 'always'."
+  },
+  "options_hide_fixed_never": {
+    "message": "Ne jamais masquer",
+    "description": "hideFixed option value 'never'."
+  },
+  "options_pre_scroll_for_lazy": {
+    "message": "Pré-défilement pour charger les images différées",
+    "description": "Options checkbox label for the preScrollForLazy setting."
+  },
+  "options_pre_scroll_for_lazy_desc": {
+    "message": "Un passage rapide sur la page avant la capture, pour laisser le temps aux images différées de s'afficher.",
+    "description": "Options field help text for the preScrollForLazy setting."
+  },
+  "options_settle_ms": {
+    "message": "Temps de stabilisation (ms)",
+    "description": "Options field label for the settleMs setting."
+  },
+  "options_settle_ms_desc": {
+    "message": "Attente supplémentaire après chaque défilement, en millisecondes. 0 laisse FullShot choisir automatiquement.",
+    "description": "Options field help text for the settleMs setting."
+  },
+  "options_scale_mode": {
+    "message": "Résolution",
+    "description": "Options field label for the scaleMode setting."
+  },
+  "options_scale_mode_desc": {
+    "message": "Appareil conserve la pleine résolution HiDPI ; CSS ramène à 1×.",
+    "description": "Options field help text for the scaleMode setting."
+  },
+  "options_scale_mode_device": {
+    "message": "Complète (pixels de l'appareil)",
+    "description": "scaleMode option value 'device'."
+  },
+  "options_scale_mode_css": {
+    "message": "Standard (pixels CSS)",
+    "description": "scaleMode option value 'css'."
+  },
+  "options_max_pixels": {
+    "message": "Taille maximale de capture",
+    "description": "Options field label for the maxPixels setting."
+  },
+  "options_max_pixels_desc": {
+    "message": "Plafond absolu de l'image assemblée. Chrome ne peut pas dessiner une image de plus de 268 mégapixels environ.",
+    "description": "Options field help text for the maxPixels setting."
+  },
+  "options_max_pixels_standard": {
+    "message": "Standard (≈268 Mpx)",
+    "description": "maxPixels preset — the default budget."
+  },
+  "options_max_pixels_large": {
+    "message": "Grande",
+    "description": "maxPixels preset — larger budget, still bounded by Chrome's canvas limit."
+  },
+  "options_max_pixels_maximum": {
+    "message": "Maximum",
+    "description": "maxPixels preset — Chrome's absolute canvas size limit."
+  },
+  "options_show_hud": {
+    "message": "Afficher l'overlay de progression",
+    "description": "Options checkbox label for the showHud setting."
+  },
+  "options_show_hud_desc": {
+    "message": "Affiche un indicateur de progression sur la page, avec l'astuce Échap pour annuler pendant la capture.",
+    "description": "Options field help text for the showHud setting."
+  },
+  "options_after_capture": {
+    "message": "Après la capture",
+    "description": "Options field label for the afterCapture setting."
+  },
+  "options_after_capture_desc": {
+    "message": "Ce qui se passe une fois l'image créée.",
+    "description": "Options field help text for the afterCapture setting."
+  },
+  "options_after_capture_editor": {
+    "message": "Ouvrir dans l'éditeur",
+    "description": "afterCapture option value 'editor'."
+  },
+  "options_after_capture_download": {
+    "message": "Télécharger",
+    "description": "afterCapture option value 'download'."
+  },
+  "options_after_capture_copy": {
+    "message": "Copier dans le presse-papiers",
+    "description": "afterCapture option value 'copy'."
+  },
+  "options_after_capture_download_copy": {
+    "message": "Télécharger et copier",
+    "description": "afterCapture option value 'download-copy'."
+  },
+  "options_format": {
+    "message": "Format",
+    "description": "Options field label for the format setting."
+  },
+  "options_format_desc": {
+    "message": "Encodage de l'image de sortie.",
+    "description": "Options field help text for the format setting."
+  },
+  "options_format_png": {
+    "message": "PNG",
+    "description": "format option value 'png'."
+  },
+  "options_format_jpeg": {
+    "message": "JPEG",
+    "description": "format option value 'jpeg'."
+  },
+  "options_format_webp": {
+    "message": "WebP",
+    "description": "format option value 'webp'."
+  },
+  "options_quality": {
+    "message": "Qualité",
+    "description": "Options field label for the quality setting."
+  },
+  "options_quality_desc": {
+    "message": "JPEG et WebP uniquement. Plus la valeur est élevée, plus l'image est nette et volumineuse.",
+    "description": "Options field help text for the quality setting."
+  },
+  "options_save_as": {
+    "message": "Demander où enregistrer",
+    "description": "Options checkbox label for the saveAs setting."
+  },
+  "options_save_as_desc": {
+    "message": "Afficher la boîte de dialogue d'enregistrement du navigateur au lieu d'enregistrer directement dans Téléchargements.",
+    "description": "Options field help text for the saveAs setting."
+  },
+  "options_filename_template": {
+    "message": "Modèle de nom de fichier",
+    "description": "Options field label for the filenameTemplate setting."
+  },
+  "options_filename_template_desc": {
+    "message": "Construit à partir des variables ci-dessous. Les caractères interdits sont supprimés automatiquement.",
+    "description": "Options field help text for the filenameTemplate setting."
+  },
+  "options_filename_template_preview_label": {
+    "message": "Aperçu :",
+    "description": "Label preceding the live filename preview."
+  },
+  "options_template_legend": {
+    "message": "Variables disponibles",
+    "description": "Heading over the list of filename template tokens."
+  },
+  "options_template_token_title": {
+    "message": "titre de la page",
+    "description": "Explanation of the {title} filename template token."
+  },
+  "options_template_token_host": {
+    "message": "nom de domaine",
+    "description": "Explanation of the {host} filename template token."
+  },
+  "options_template_token_path": {
+    "message": "chemin de l'URL",
+    "description": "Explanation of the {path} filename template token."
+  },
+  "options_template_token_date": {
+    "message": "date (AAAA-MM-JJ)",
+    "description": "Explanation of the {date} filename template token."
+  },
+  "options_template_token_time": {
+    "message": "heure (HH-MM-SS)",
+    "description": "Explanation of the {time} filename template token."
+  },
+  "options_template_token_datetime": {
+    "message": "date et heure",
+    "description": "Explanation of the {datetime} filename template token."
+  },
+  "options_template_token_width": {
+    "message": "largeur de l'image en pixels",
+    "description": "Explanation of the {width} filename template token."
+  },
+  "options_template_token_height": {
+    "message": "hauteur de l'image en pixels",
+    "description": "Explanation of the {height} filename template token."
+  },
+  "options_template_token_mode": {
+    "message": "mode de capture",
+    "description": "Explanation of the {mode} filename template token."
+  },
+  "options_template_token_timestamp": {
+    "message": "millisecondes depuis l'epoch",
+    "description": "Explanation of the {timestamp} filename template token."
+  },
+  "options_shortcuts_desc": {
+    "message": "Les raccourcis clavier sont gérés par Chrome lui-même, sur une page interne dédiée que les extensions ne sont pas autorisées à ouvrir automatiquement.",
+    "description": "Explanation shown above the shortcuts page link."
+  },
+  "options_shortcuts_url_label": {
+    "message": "Page des raccourcis",
+    "description": "Label for the selectable chrome://extensions/shortcuts text field."
+  },
+  "options_shortcuts_copy": {
+    "message": "Copier",
+    "description": "Button that copies the shortcuts page URL to the clipboard."
+  },
+  "options_shortcuts_copied": {
+    "message": "Copié !",
+    "description": "Toast shown after the shortcuts page URL is copied."
+  },
+  "options_shortcuts_copy_failed": {
+    "message": "Impossible de copier — sélectionnez et copiez le texte manuellement.",
+    "description": "Toast shown when copying the shortcuts page URL fails."
+  },
+  "options_shortcuts_current_label": {
+    "message": "Raccourcis actuels",
+    "description": "Heading over the list of currently assigned keyboard shortcuts."
+  },
+  "options_theme": {
+    "message": "Thème",
+    "description": "Options field label for the theme setting."
+  },
+  "options_theme_desc": {
+    "message": "S'applique au popup, à la page d'options et à l'éditeur.",
+    "description": "Options field help text for the theme setting."
+  },
+  "options_theme_system": {
+    "message": "Suivre le système",
+    "description": "theme option value 'system'."
+  },
+  "options_theme_light": {
+    "message": "Clair",
+    "description": "theme option value 'light'."
+  },
+  "options_theme_dark": {
+    "message": "Sombre",
+    "description": "theme option value 'dark'."
+  },
+  "options_locale": {
+    "message": "Langue",
+    "description": "Options field label for the locale setting."
+  },
+  "options_locale_desc": {
+    "message": "Langue préférée pour l'interface de FullShot.",
+    "description": "Options field help text for the locale setting."
+  },
+  "options_locale_auto": {
+    "message": "Suivre Chrome",
+    "description": "locale option value 'auto'."
+  },
+  "options_locale_en": {
+    "message": "Anglais",
+    "description": "locale option value 'en'."
+  },
+  "options_locale_fr": {
+    "message": "Français",
+    "description": "locale option value 'fr'."
+  },
+  "options_reset_button": {
+    "message": "Réinitialiser les valeurs par défaut",
+    "description": "Button that starts the reset-to-defaults confirmation."
+  },
+  "options_reset_confirm_message": {
+    "message": "Réinitialiser tous les réglages à leur valeur par défaut ?",
+    "description": "Inline confirmation message shown before resetting settings."
+  },
+  "options_reset_confirm_yes": {
+    "message": "Oui, réinitialiser",
+    "description": "Confirms the reset-to-defaults action."
+  },
+  "options_reset_confirm_no": {
+    "message": "Annuler",
+    "description": "Cancels the reset-to-defaults action."
+  },
+  "options_reset_done": {
+    "message": "Réglages réinitialisés",
+    "description": "Toast shown after settings are reset to defaults."
+  },
+  "options_about_privacy": {
+    "message": "Aucune requête réseau. Aucune télémétrie. Aucun compte. Les réglages sont stockés localement sur cet appareil uniquement.",
+    "description": "Privacy statement shown in the About section."
+  },
+  "options_about_version_label": {
+    "message": "Version",
+    "description": "Label preceding the extension's version number, read from the manifest."
+  }
+}
