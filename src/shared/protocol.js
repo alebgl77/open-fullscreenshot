@@ -1,5 +1,5 @@
 /**
- * FullShot — shared protocol contract.
+ * Open FullScreenshot — shared protocol contract.
  *
  * Loaded as a CLASSIC script in every context:
  *   - service worker   : importScripts('../shared/protocol.js')

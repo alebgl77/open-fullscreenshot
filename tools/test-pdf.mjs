@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * FullShot — self-test for src/lib/pdf.js.
+ * Open FullScreenshot — self-test for src/lib/pdf.js.
  *
  * Plain Node 18+ ESM, no dependencies, no test framework. Loads pdf.js as a
  * classic script via node:vm (the same `globalThis.FS = ...` pattern it uses
@@ -178,7 +178,7 @@ const height = 6000;
 
 let a4Buffer;
 for (const pageSize of ['fit', 'a4', 'letter']) {
-  const blob = await FS.pdf.fromImage(jpegBlob, { width, height, pageSize, title: 'FullShot Café ☕' });
+  const blob = await FS.pdf.fromImage(jpegBlob, { width, height, pageSize, title: 'Open FullScreenshot Café ☕' });
   const buf = await checkPdf(`pageSize=${pageSize}`, blob, { expectPagesGT1: pageSize !== 'fit' });
   if (pageSize === 'a4') a4Buffer = buf;
 }
@@ -186,7 +186,7 @@ for (const pageSize of ['fit', 'a4', 'letter']) {
 // ACCEPTANCE #2 — write one output to disk so its byte structure can be
 // inspected outside this script (there is no PDF reader to script here, so
 // the structural assertions above are the verification).
-const outPath = path.join(os.tmpdir(), 'fullshot-test.pdf');
+const outPath = path.join(os.tmpdir(), 'open-fullscreenshot-test.pdf');
 fs.writeFileSync(outPath, a4Buffer);
 console.log(`wrote ${outPath} (${a4Buffer.length} bytes)`);
 

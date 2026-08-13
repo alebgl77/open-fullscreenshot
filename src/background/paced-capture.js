@@ -1,5 +1,5 @@
 /**
- * FullShot — adaptive pacer for chrome.tabs.captureVisibleTab.
+ * Open FullScreenshot — adaptive pacer for chrome.tabs.captureVisibleTab.
  *
  * Chrome rate-limits captureVisibleTab and the exact ceiling is neither
  * documented nor stable across versions, so the interval is *learned* at

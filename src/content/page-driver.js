@@ -1,5 +1,5 @@
 /**
- * FullShot — page driver (content script).
+ * Open FullScreenshot — page driver (content script).
  *
  * Injected on demand by the background worker, in this order and in the same
  * isolated world: protocol.js, util.js, page-driver.js. Classic script, no
@@ -23,11 +23,11 @@
   if (FS.pageDriver) return;
 
   /** The only marks left on page nodes — attributes, never inline styles. */
-  const ATTR_HIDDEN = 'data-fullshot-hidden';
-  const ATTR_STATIC = 'data-fullshot-static';
-  const ATTR_LAZY = 'data-fullshot-lazy';
-  const ATTR_UI = 'data-fullshot-ui';
-  const STYLE_ID = 'fullshot-freeze';
+  const ATTR_HIDDEN = 'data-ofs-hidden';
+  const ATTR_STATIC = 'data-ofs-static';
+  const ATTR_LAZY = 'data-ofs-lazy';
+  const ATTR_UI = 'data-ofs-ui';
+  const STYLE_ID = 'ofs-freeze';
 
   /** A hostile page can hold 500 000 nodes; never walk more than this. */
   const WALK_LIMIT = 20000;
@@ -46,8 +46,8 @@
     'html { scroll-behavior: auto !important; }',
     '* { scroll-behavior: auto !important; scroll-snap-type: none !important;',
     '    animation-play-state: paused !important; transition: none !important; }',
-    '[data-fullshot-hidden] { visibility: hidden !important; }',
-    '[data-fullshot-static]  { position: static !important; }'
+    '[data-ofs-hidden] { visibility: hidden !important; }',
+    '[data-ofs-static]  { position: static !important; }'
   ].join('\n');
 
   /** Everything CS_RESTORE has to be able to undo lives here. */

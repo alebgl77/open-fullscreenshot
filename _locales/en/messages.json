@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "FullShot — Full Page Screen Capture",
+    "message": "Open FullScreenshot — Full Page Screen Capture",
     "description": "Extension name, shown in chrome://extensions and the Chrome Web Store."
   },
   "ext_description": {
@@ -8,11 +8,11 @@
     "description": "Extension description, shown in chrome://extensions and the Chrome Web Store."
   },
   "action_title": {
-    "message": "Capture with FullShot",
+    "message": "Capture with Open FullScreenshot",
     "description": "Tooltip shown when hovering the toolbar icon."
   },
   "cmd_default": {
-    "message": "Run FullShot's default action",
+    "message": "Run Open FullScreenshot's default action",
     "description": "Description of the _execute_action keyboard command in chrome://extensions/shortcuts."
   },
   "cmd_fullpage": {
@@ -76,7 +76,7 @@
     "description": "On-page HUD hint shown during capture."
   },
   "hud_title": {
-    "message": "FullShot is capturing this page",
+    "message": "Open FullScreenshot is capturing this page",
     "description": "On-page HUD title shown during capture."
   },
   "select_hint_element": {
@@ -96,7 +96,7 @@
     "description": "Error shown when the active tab is a chrome:// or otherwise restricted URL."
   },
   "err_no_content_script": {
-    "message": "FullShot couldn't reach this page. Try reloading it.",
+    "message": "Open FullScreenshot couldn't reach this page. Try reloading it.",
     "description": "Error shown when the content script fails to respond."
   },
   "err_capture_failed": {
@@ -124,7 +124,7 @@
     "description": "Error shown when the user confirms a selection smaller than 4×4 pixels."
   },
   "err_file_urls": {
-    "message": "Enable \"Allow access to file URLs\" for FullShot in chrome://extensions to capture local files.",
+    "message": "Enable \"Allow access to file URLs\" for Open FullScreenshot in chrome://extensions to capture local files.",
     "description": "Error shown when capturing a file:// page without the file-access permission enabled."
   },
   "editor_save": {
@@ -308,7 +308,7 @@
     "description": "Options field label for the settleMs setting."
   },
   "options_settle_ms_desc": {
-    "message": "Extra wait after each scroll step, in milliseconds. 0 lets FullShot choose automatically.",
+    "message": "Extra wait after each scroll step, in milliseconds. 0 lets Open FullScreenshot choose automatically.",
     "description": "Options field help text for the settleMs setting."
   },
   "options_scale_mode": {
@@ -520,7 +520,7 @@
     "description": "Options field label for the locale setting."
   },
   "options_locale_desc": {
-    "message": "Preferred language for FullShot's own interface.",
+    "message": "Preferred language for Open FullScreenshot's own interface.",
     "description": "Options field help text for the locale setting."
   },
   "options_locale_auto": {

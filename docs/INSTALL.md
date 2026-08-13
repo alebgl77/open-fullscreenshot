@@ -1,6 +1,6 @@
 # Install (Windows 11)
 
-FullShot is not built or bundled — Chrome loads `src/` and `manifest.json`
+Open FullScreenshot is not built or bundled — Chrome loads `src/` and `manifest.json`
 directly. There is nothing to `npm install`.
 
 ## 1. Load the extension unpacked
@@ -11,22 +11,22 @@ directly. There is nothing to `npm install`.
 4. In the file picker, select the project's root folder — the one that
    directly contains `manifest.json` (e.g.
    `C:\Users\<you>\Documents\AI\Claudius\Chrome extension gofullpage screencapture`).
-5. FullShot should appear in the extensions list and its icon should show up
+5. Open FullScreenshot should appear in the extensions list and its icon should show up
    in the toolbar (click the puzzle-piece icon and pin it if it doesn't).
 
 Whenever you edit any file under `src/`, go back to `chrome://extensions` and
-click the reload icon on the FullShot card to pick up the changes.
+click the reload icon on the Open FullScreenshot card to pick up the changes.
 
 ## 2. Allow access to `file://` pages (optional)
 
-By default no extension can read local files. To let FullShot capture pages
+By default no extension can read local files. To let Open FullScreenshot capture pages
 opened with `file:///...`:
 
 1. Go to `chrome://extensions`.
-2. Find FullShot and click **Details**.
+2. Find Open FullScreenshot and click **Details**.
 3. Turn on **Allow access to file URLs**.
 
-Without this toggle, FullShot will show a clear "file URLs not allowed"
+Without this toggle, Open FullScreenshot will show a clear "file URLs not allowed"
 message instead of failing silently on a `file://` page.
 
 ## 3. Set keyboard shortcuts
@@ -36,7 +36,7 @@ so:
 
 1. Open a new tab and go to `chrome://extensions/shortcuts` (type or paste
    this — it can't be clicked from inside the extension).
-2. Find the **FullShot** section and set/change any of the four commands:
+2. Find the **Open FullScreenshot** section and set/change any of the four commands:
    - Default action (opens the mode chooser or the configured default mode)
    - Capture full page
    - Capture visible area
@@ -53,7 +53,7 @@ Web Store would consume:
 node tools/package.mjs
 ```
 
-This writes `dist/fullshot-<version>.zip`, containing exactly
+This writes `dist/open-fullscreenshot-<version>.zip`, containing exactly
 `manifest.json`, `icons/`, `src/` and `_locales/` — no docs, no tooling, no
 `.git`. `tools/package.mjs` refuses to write a zip if `tools/validate.mjs`
 reports any failure.
@@ -94,7 +94,7 @@ position, and no elements left hidden on the page afterwards.
 - [ ] A `file://` page, with and without "Allow access to file URLs" enabled
       — capture works when enabled, and shows a clear error when it isn't.
 - [ ] A restricted page (`chrome://extensions`, `chrome://settings`, or the
-      Chrome Web Store) — FullShot shows a friendly "can't capture this page"
+      Chrome Web Store) — Open FullScreenshot shows a friendly "can't capture this page"
       message instead of a silent failure or a raw error.
 - [ ] Escape during a full-page capture cancels cleanly: the page is
       restored, no elements stay hidden, and no toast/HUD is left behind.

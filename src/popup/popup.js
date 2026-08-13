@@ -1,5 +1,5 @@
 /**
- * FullShot — popup logic.
+ * Open FullScreenshot — popup logic.
  *
  * Only ever shown when settings.defaultAction === 'menu' or from the
  * "More…" context menu item. Sends a capture request and closes itself

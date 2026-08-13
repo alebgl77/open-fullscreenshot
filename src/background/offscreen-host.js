@@ -1,5 +1,5 @@
 /**
- * FullShot — lifecycle of the offscreen stitching document.
+ * Open FullScreenshot — lifecycle of the offscreen stitching document.
  *
  * A service worker has no DOM, so every canvas operation happens in a hidden
  * offscreen document. Chrome allows exactly ONE per extension, and creating a
@@ -30,7 +30,7 @@
         return await chrome.offscreen.hasDocument();
       } catch (error) {
         // Older builds reject instead of answering; fall through to getContexts.
-        console.debug('FullShot: hasDocument unavailable', error);
+        console.debug('Open FullScreenshot: hasDocument unavailable', error);
       }
     }
     if (chrome.runtime.getContexts) {
@@ -96,7 +96,7 @@
       try {
         if (await documentExists()) await chrome.offscreen.closeDocument();
       } catch (error) {
-        console.debug('FullShot: offscreen already closed', error);
+        console.debug('Open FullScreenshot: offscreen already closed', error);
       }
     }
   };

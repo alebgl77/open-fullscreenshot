@@ -1,5 +1,5 @@
 /**
- * FullShot — static validator.
+ * Open FullScreenshot — static validator.
  *
  * Node 18+ ESM, zero dependencies. Implements ARCHITECTURE.md §12 (and the
  * expanded checklist in the task brief that spawned this file).
@@ -560,7 +560,7 @@ function main() {
     else console.log(`[FAIL] ${r.name} — ${r.detail}`);
   }
   console.log('-'.repeat(70));
-  console.log(`FullShot validate: ${results.length - failed.length} passed, ${failed.length} failed`);
+  console.log(`Open FullScreenshot validate: ${results.length - failed.length} passed, ${failed.length} failed`);
   process.exitCode = failed.length === 0 ? 0 : 1;
 }
 

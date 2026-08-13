@@ -1,4 +1,4 @@
-# FullShot — Architecture & implementation contract
+# Open FullScreenshot — Architecture & implementation contract
 
 Full-page screen capture for Chrome (Manifest V3). Original implementation; no
 third-party extension code, name or branding is reused.
@@ -175,13 +175,13 @@ elements hidden.
 2. **Snapshot** everything that will be mutated: scroll offsets, and nothing else
    (all styling is done through one injected `<style>` element that is simply
    removed on restore).
-3. **Freeze** by injecting one `<style id="fullshot-freeze">`:
+3. **Freeze** by injecting one `<style id="ofs-freeze">`:
    ```css
    html { scroll-behavior: auto !important; }
    * { scroll-behavior: auto !important; scroll-snap-type: none !important;
        animation-play-state: paused !important; transition: none !important; }
-   [data-fullshot-hidden] { visibility: hidden !important; }
-   [data-fullshot-static]  { position: static !important; }
+   [data-ofs-hidden] { visibility: hidden !important; }
+   [data-ofs-static]  { position: static !important; }
    ```
    Attribute-based hiding, never inline styles: restoring is then a matter of
    removing attributes and the `<style>` node, and the page's own inline styles
@@ -197,7 +197,7 @@ elements hidden.
 
    | setting | frame 0 | frames ≥ 1 |
    |---|---|---|
-   | `smart` (default) | hide `bottomAnchored` + `other` | hide **all** fixed; `sticky` → `data-fullshot-static` |
+   | `smart` (default) | hide `bottomAnchored` + `other` | hide **all** fixed; `sticky` → `data-ofs-static` |
    | `always` | hide all | hide all |
    | `never` | hide none | hide none |
 

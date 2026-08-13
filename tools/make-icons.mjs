@@ -1,5 +1,5 @@
 /**
- * FullShot — icon rasterizer.
+ * Open FullScreenshot — icon rasterizer.
  *
  * Node 18+ ESM, zero dependencies. Rasterizes icons/icon.svg to the four PNG
  * sizes the manifest references (16/32/48/128).
@@ -75,7 +75,7 @@ function renderWithChrome(chromePath, size, outPath) {
     '</body></html>'
   ].join('');
 
-  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'fullshot-icon-'));
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'open-fullscreenshot-icon-'));
   try {
     const htmlPath = path.join(tmpDir, `icon-${size}.html`);
     writeFileSync(htmlPath, html, 'utf8');

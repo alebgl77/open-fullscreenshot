@@ -1,5 +1,5 @@
 /**
- * FullShot — small helpers shared by every context.
+ * Open FullScreenshot — small helpers shared by every context.
  * Classic script — attaches to globalThis.FS. Load protocol.js first.
  */
 (function () {

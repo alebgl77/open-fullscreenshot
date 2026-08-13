@@ -1,5 +1,5 @@
 /**
- * FullShot — dependency-free PDF writer.
+ * Open FullScreenshot — dependency-free PDF writer.
  * Classic script — attaches to globalThis.FS. Runs in a browser page (the editor).
  *
  * Builds a PDF 1.7 file byte-for-byte: no external library, no zlib port, no

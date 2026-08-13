@@ -1,5 +1,5 @@
 /**
- * FullShot — options page logic.
+ * Open FullScreenshot — options page logic.
  *
  * One control per key in FS.Settings.DEFAULTS, wired through FS.Settings.set
  * and re-synced via FS.Settings.onChange so external changes (another

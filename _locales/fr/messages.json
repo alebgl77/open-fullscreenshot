@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "FullShot — Capture d'écran pleine page",
+    "message": "Open FullScreenshot — Capture d'écran pleine page",
     "description": "Extension name, shown in chrome://extensions and the Chrome Web Store."
   },
   "ext_description": {
@@ -8,11 +8,11 @@
     "description": "Extension description, shown in chrome://extensions and the Chrome Web Store."
   },
   "action_title": {
-    "message": "Capturer avec FullShot",
+    "message": "Capturer avec Open FullScreenshot",
     "description": "Tooltip shown when hovering the toolbar icon."
   },
   "cmd_default": {
-    "message": "Exécuter l'action par défaut de FullShot",
+    "message": "Exécuter l'action par défaut de Open FullScreenshot",
     "description": "Description of the _execute_action keyboard command in chrome://extensions/shortcuts."
   },
   "cmd_fullpage": {
@@ -76,7 +76,7 @@
     "description": "On-page HUD hint shown during capture."
   },
   "hud_title": {
-    "message": "FullShot capture cette page",
+    "message": "Open FullScreenshot capture cette page",
     "description": "On-page HUD title shown during capture."
   },
   "select_hint_element": {
@@ -96,7 +96,7 @@
     "description": "Error shown when the active tab is a chrome:// or otherwise restricted URL."
   },
   "err_no_content_script": {
-    "message": "FullShot n'a pas pu accéder à cette page. Essayez de la recharger.",
+    "message": "Open FullScreenshot n'a pas pu accéder à cette page. Essayez de la recharger.",
     "description": "Error shown when the content script fails to respond."
   },
   "err_capture_failed": {
@@ -124,7 +124,7 @@
     "description": "Error shown when the user confirms a selection smaller than 4×4 pixels."
   },
   "err_file_urls": {
-    "message": "Activez « Autoriser l'accès aux URL de fichiers » pour FullShot dans chrome://extensions pour capturer des fichiers locaux.",
+    "message": "Activez « Autoriser l'accès aux URL de fichiers » pour Open FullScreenshot dans chrome://extensions pour capturer des fichiers locaux.",
     "description": "Error shown when capturing a file:// page without the file-access permission enabled."
   },
   "editor_save": {
@@ -308,7 +308,7 @@
     "description": "Options field label for the settleMs setting."
   },
   "options_settle_ms_desc": {
-    "message": "Attente supplémentaire après chaque défilement, en millisecondes. 0 laisse FullShot choisir automatiquement.",
+    "message": "Attente supplémentaire après chaque défilement, en millisecondes. 0 laisse Open FullScreenshot choisir automatiquement.",
     "description": "Options field help text for the settleMs setting."
   },
   "options_scale_mode": {
@@ -520,7 +520,7 @@
     "description": "Options field label for the locale setting."
   },
   "options_locale_desc": {
-    "message": "Langue préférée pour l'interface de FullShot.",
+    "message": "Langue préférée pour l'interface de Open FullScreenshot.",
     "description": "Options field help text for the locale setting."
   },
   "options_locale_auto": {

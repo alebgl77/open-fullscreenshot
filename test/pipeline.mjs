@@ -1,5 +1,5 @@
 /**
- * FullShot full-pipeline harness — zero dependencies, Node 22+.
+ * Open FullScreenshot full-pipeline harness — zero dependencies, Node 22+.
  *
  *   node test/pipeline.mjs [--headful] [--fixture=long-article]
  *
@@ -79,7 +79,7 @@ globalThis.chrome = {
   runtime: {
     id: 'test-extension-id',
     lastError: null,
-    getManifest: () => ({ version: '1.0.0', name: 'FullShot' }),
+    getManifest: () => ({ version: '1.0.0', name: 'Open FullScreenshot' }),
     getURL: (p) => 'chrome-extension://test/' + p,
     onMessage: {
       addListener: (fn) => globalThis.__inbox.push(fn),
@@ -334,9 +334,9 @@ async function main() {
 
     const after = await chrome.browser.eval(sessionId, `(() => ({
       y: window.scrollY,
-      freeze: !!document.getElementById('fullshot-freeze'),
-      marks: document.querySelectorAll('[data-fullshot-hidden],[data-fullshot-static]').length,
-      ui: document.querySelectorAll('[data-fullshot-ui]').length,
+      freeze: !!document.getElementById('ofs-freeze'),
+      marks: document.querySelectorAll('[data-ofs-hidden],[data-ofs-static]').length,
+      ui: document.querySelectorAll('[data-ofs-ui]').length,
       badge: globalThis.__badge.slice(-3) }))()`);
     check('page restored after the real run',
       after.y === 0 && !after.freeze && after.marks === 0 && after.ui === 0, JSON.stringify(after));

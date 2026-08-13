@@ -1,6 +1,6 @@
-# FullShot
+# Open FullScreenshot
 
-**Résumé (FR) :** FullShot est une extension Chrome (Manifest V3) qui capture
+**Résumé (FR) :** Open FullScreenshot est une extension Chrome (Manifest V3) qui capture
 une page web entière (défilement + assemblage), la zone visible, ou un
 élément/une région choisis à la souris via un seul overlay. L'image obtenue
 peut être exportée en PNG, JPEG, WebP ou PDF, retouchée (recadrage,
@@ -19,7 +19,7 @@ extension.
 
 ## What it is
 
-FullShot captures a browser tab as an image or a PDF: the whole scrollable
+Open FullScreenshot captures a browser tab as an image or a PDF: the whole scrollable
 page (scroll & stitch), just the visible viewport, or a single element/region
 you pick with the mouse — all through one on-page selection overlay. The
 result opens in a built-in editor for cropping and redaction, then can be
@@ -125,11 +125,11 @@ a real page instead.
 - **Chrome-internal and store pages cannot be captured — by any extension.**
   `chrome://`, `chrome-extension://`, `devtools://`, `edge://`,
   `view-source:` pages, and the Chrome Web Store, are off-limits to every
-  extension; Chrome enforces this itself. FullShot detects this up front and
+  extension; Chrome enforces this itself. Open FullScreenshot detects this up front and
   shows a clear message instead of failing silently.
 - **`file://` pages need one extra toggle.** By default Chrome does not let
   any extension touch local files. Enable "Allow access to file URLs" for
-  FullShot at `chrome://extensions` if you want to capture local HTML files.
+  Open FullScreenshot at `chrome://extensions` if you want to capture local HTML files.
 - **Very long pages get downscaled.** Chrome's `<canvas>` has a hard pixel
   ceiling (roughly 268 million pixels of area, and 65 535 px on a side). An
   extremely tall page that would exceed that limit is automatically

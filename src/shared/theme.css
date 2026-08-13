@@ -1,5 +1,5 @@
 /*
- * FullShot — shared design tokens & base component layer.
+ * Open FullScreenshot — shared design tokens & base component layer.
  *
  * Loaded first, before any page-specific stylesheet, on every extension page
  * (popup, options, editor). No web fonts, no remote assets: everything here

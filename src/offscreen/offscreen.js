@@ -1,5 +1,5 @@
 /**
- * FullShot — offscreen stitcher.
+ * Open FullScreenshot — offscreen stitcher.
  *
  * The service worker has no DOM, so this hidden document owns the one canvas
  * every frame is drawn onto, the encoder, and the blob URLs handed back to the
@@ -139,7 +139,7 @@
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     } catch (error) {
       // Typically "Document is not focused": the caller falls back to the page.
-      console.warn('FullShot offscreen: clipboard refused', error);
+      console.warn('Open FullScreenshot offscreen: clipboard refused', error);
       throw new Error(FS.ERR.CLIPBOARD);
     }
     return { ok: true };
@@ -188,7 +188,7 @@
     }
     if (!task) return false;
     task.then(sendResponse, (error) => {
-      console.warn('FullShot offscreen:', message.type, error);
+      console.warn('Open FullScreenshot offscreen:', message.type, error);
       sendResponse({ error: String((error && error.message) || error) });
     });
     return true;

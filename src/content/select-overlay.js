@@ -1,5 +1,5 @@
 /**
- * FullShot — selection overlay (content script).
+ * Open FullScreenshot — selection overlay (content script).
  *
  * Injected on demand after protocol.js and util.js, in the same isolated world
  * as page-driver.js. Classic script, no module, no build step.
@@ -20,7 +20,7 @@
   // executeScript re-runs this file on every select capture in the same tab.
   if (FS.selectOverlay) return;
 
-  const ATTR_UI = 'data-fullshot-ui';
+  const ATTR_UI = 'data-ofs-ui';
 
   const EDGE = 40; // auto-scroll band, px from the viewport edge
   const EDGE_MAX_SPEED = 24; // px per frame at the very edge

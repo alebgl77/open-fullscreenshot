@@ -1,7 +1,7 @@
 /**
- * FullShot — release packager.
+ * Open FullScreenshot — release packager.
  *
- * Node 18+ ESM, zero dependencies. Produces dist/fullshot-<version>.zip
+ * Node 18+ ESM, zero dependencies. Produces dist/open-fullscreenshot-<version>.zip
  * containing exactly what Chrome needs to load the extension: manifest.json,
  * icons/, src/, _locales/. docs/, tools/, dist/, .git and *.md are never
  * included (the walk below never even looks at them).
@@ -186,7 +186,7 @@ function main() {
 
   const distDir = path.join(ROOT, 'dist');
   mkdirSync(distDir, { recursive: true });
-  const outPath = path.join(distDir, `fullshot-${version}.zip`);
+  const outPath = path.join(distDir, `open-fullscreenshot-${version}.zip`);
 
   const zipBuffer = buildZip(entries);
   writeFileSync(outPath, zipBuffer);

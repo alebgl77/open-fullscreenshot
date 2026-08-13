@@ -1,5 +1,5 @@
 /**
- * FullShot — service worker (entry point).
+ * Open FullScreenshot — service worker (entry point).
  *
  * Classic worker, not a module: every shared file is a plain script that
  * attaches to globalThis.FS, so the exact same source loads here, in the content
@@ -55,7 +55,7 @@ importScripts(
 
   function ignore(promise) {
     if (promise && typeof promise.catch === 'function') {
-      promise.catch((error) => console.debug('FullShot: ignored', error));
+      promise.catch((error) => console.debug('Open FullScreenshot: ignored', error));
     }
   }
 
@@ -122,7 +122,7 @@ importScripts(
     try {
       await chrome.action.setPopup({ popup });
     } catch (error) {
-      console.warn('FullShot: setPopup failed', error);
+      console.warn('Open FullScreenshot: setPopup failed', error);
     }
   }
 
@@ -133,7 +133,7 @@ importScripts(
         { id: item.id, title: FS.util.t(item.key), contexts: item.contexts },
         () => {
           const lastError = chrome.runtime.lastError;
-          if (lastError) console.warn('FullShot: menu', item.id, lastError.message);
+          if (lastError) console.warn('Open FullScreenshot: menu', item.id, lastError.message);
         }
       );
     }
@@ -173,7 +173,7 @@ importScripts(
         return await chrome.tabs.get(hint);
       } catch (error) {
         // Stale id from a UI page: fall back to whatever is in front now.
-        console.debug('FullShot: stale tab id', error);
+        console.debug('Open FullScreenshot: stale tab id', error);
       }
     }
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -292,7 +292,7 @@ importScripts(
         sendResponse(payload);
       } catch (error) {
         // The sender closed (popups do, on purpose) — nothing to deliver to.
-        console.debug('FullShot: reply dropped', error);
+        console.debug('Open FullScreenshot: reply dropped', error);
       }
     };
     task.then(

@@ -1,5 +1,5 @@
 /**
- * FullShot — result editor page.
+ * Open FullScreenshot — result editor page.
  *
  * Classic script — runs after protocol.js, util.js, settings.js and (if
  * present) lib/pdf.js have attached themselves to window.FS. Bootstraps from
@@ -729,7 +729,7 @@
       state.objectUrl = URL.createObjectURL(blob);
 
       sendMessage({ type: FS.MSG.UI_RELEASE_CAPTURE, id }).catch((err) => {
-        console.warn('FullShot: release-capture failed', err);
+        console.warn('Open FullScreenshot: release-capture failed', err);
       });
 
       await loadImage();
@@ -737,7 +737,7 @@
       rebuild();
       fitToView();
     } catch (err) {
-      console.warn('FullShot: editor bootstrap failed', err);
+      console.warn('Open FullScreenshot: editor bootstrap failed', err);
       showEmptyState();
     }
   }

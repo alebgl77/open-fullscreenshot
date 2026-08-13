@@ -1,5 +1,5 @@
 /**
- * FullShot harness — content-script layer. Zero dependencies, Node 22+.
+ * Open FullScreenshot harness — content-script layer. Zero dependencies, Node 22+.
  *
  *   node test/e2e.mjs [--headful] [--keep]
  *
@@ -47,7 +47,7 @@ globalThis.chrome = {
   runtime: {
     id: 'test-extension-id',
     lastError: null,
-    getManifest: () => ({ version: '1.0.0', name: 'FullShot' }),
+    getManifest: () => ({ version: '1.0.0', name: 'Open FullScreenshot' }),
     getURL: (p) => 'chrome-extension://test/' + p,
     onMessage: {
       addListener: (fn) => globalThis.__fsInbox.push(fn),
@@ -170,9 +170,9 @@ async function phase1(chrome) {
         `lastY=${ys[ys.length - 1]} maxScroll=${maxScroll}`);
 
   const mid = await chrome.browser.eval(sessionId, `(() => ({
-      freeze: !!document.getElementById('fullshot-freeze'),
-      hidden: document.querySelectorAll('[data-fullshot-hidden]').length,
-      statics: document.querySelectorAll('[data-fullshot-static]').length }))()`);
+      freeze: !!document.getElementById('ofs-freeze'),
+      hidden: document.querySelectorAll('[data-ofs-hidden]').length,
+      statics: document.querySelectorAll('[data-ofs-static]').length }))()`);
   check('freeze stylesheet installed during capture', mid.freeze === true, JSON.stringify(mid));
   check('fixed elements hidden on later frames', mid.hidden > 0, `hidden=${mid.hidden} static=${mid.statics}`);
 
@@ -184,10 +184,10 @@ async function phase1(chrome) {
   const after = await chrome.browser.eval(sessionId, `(() => ({
       html: document.documentElement.outerHTML,
       y: window.scrollY, x: window.scrollX,
-      freeze: !!document.getElementById('fullshot-freeze'),
-      hidden: document.querySelectorAll('[data-fullshot-hidden]').length,
-      statics: document.querySelectorAll('[data-fullshot-static]').length,
-      ui: document.querySelectorAll('[data-fullshot-ui]').length }))()`);
+      freeze: !!document.getElementById('ofs-freeze'),
+      hidden: document.querySelectorAll('[data-ofs-hidden]').length,
+      statics: document.querySelectorAll('[data-ofs-static]').length,
+      ui: document.querySelectorAll('[data-ofs-ui]').length }))()`);
 
   check('freeze stylesheet removed', after.freeze === false);
   check('no capture attributes left behind', after.hidden === 0 && after.statics === 0,
@@ -276,7 +276,7 @@ async function phase2(chrome) {
   await chrome.browser.eval(sessionId, `globalThis.__sel = __fsCall({ type: FS.MSG.CS_SELECT }); true`, { awaitPromise: false });
   await sleep(500);
   check('overlay mounts a host node',
-        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-fullshot-ui]').length`)) > 0);
+        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-ofs-ui]').length`)) > 0);
 
   const mouse = (type, x, y, buttons) =>
     chrome.browser.send('Input.dispatchMouseEvent',
@@ -309,7 +309,7 @@ async function phase2(chrome) {
   }
 
   check('overlay removes itself after resolving',
-        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-fullshot-ui]').length`)) === 0);
+        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-ofs-ui]').length`)) === 0);
 
   // Escape must cancel cleanly and leave nothing behind.
   await chrome.browser.eval(sessionId, `globalThis.__sel2 = __fsCall({ type: FS.MSG.CS_SELECT }); true`, { awaitPromise: false });
@@ -325,7 +325,7 @@ async function phase2(chrome) {
   );
   check('Escape cancels the overlay', !!(cancelled && cancelled.cancelled), JSON.stringify(cancelled).slice(0, 200));
   check('nothing left behind after cancel',
-        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-fullshot-ui]').length`)) === 0);
+        (await chrome.browser.eval(sessionId, `document.querySelectorAll('[data-ofs-ui]').length`)) === 0);
 }
 
 /* ------------------------------------------------------------------ phase 3 */
@@ -335,7 +335,7 @@ const UI_STUB = `
 globalThis.chrome = {
   runtime: {
     id: 'test', lastError: null,
-    getManifest: () => ({ version: '1.0.0', name: 'FullShot' }),
+    getManifest: () => ({ version: '1.0.0', name: 'Open FullScreenshot' }),
     getURL: (p) => p,
     sendMessage: () => Promise.resolve(null),
     onMessage: { addListener: () => {}, removeListener: () => {} },

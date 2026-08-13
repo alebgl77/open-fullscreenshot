@@ -1,5 +1,5 @@
 /**
- * FullShot — settings store.
+ * Open FullScreenshot — settings store.
  *
  * Deliberately backed by chrome.storage.LOCAL, never `sync`: preferences stay
  * on this machine and are never uploaded to a Google account. The extension

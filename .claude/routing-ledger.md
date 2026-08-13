@@ -1,4 +1,4 @@
-# Routing ledger — FullShot (Chrome MV3 full-page capture)
+# Routing ledger — Open FullScreenshot (Chrome MV3 full-page capture)
 
 One row per dispatched task. Written by the main thread only.
 

@@ -68,7 +68,7 @@ export async function launchChrome({ extensionDir, port = 9333, headless = true,
   const bin = findChrome();
   if (!bin) throw new Error('Chrome not found. Set CHROME_PATH.');
 
-  const userDataDir = mkdtempSync(path.join(tmpdir(), 'fullshot-e2e-'));
+  const userDataDir = mkdtempSync(path.join(tmpdir(), 'open-fullscreenshot-e2e-'));
   const args = [
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${userDataDir}`,

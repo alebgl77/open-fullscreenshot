@@ -1,5 +1,5 @@
 /**
- * FullShot — capture engine (ARCHITECTURE.md §5, §7).
+ * Open FullScreenshot — capture engine (ARCHITECTURE.md §5, §7).
  *
  * Owns one capture from end to end: inject the content script, freeze and tile
  * the page, pace the frame grabs, stitch them in the offscreen document, encode
@@ -132,7 +132,7 @@
       return true;
     } catch (error) {
       // Restricted page, or the tab navigated away: the badge already reported it.
-      console.debug('FullShot: toast not delivered', error);
+      console.debug('Open FullScreenshot: toast not delivered', error);
       return false;
     }
   }
@@ -141,7 +141,7 @@
     const message = { type: FS.MSG.UI_PROGRESS, done, total, phase };
     return chrome.runtime.sendMessage(message).catch((error) => {
       // Nothing is listening — normal when no extension page is open.
-      console.debug('FullShot: no progress listener', error);
+      console.debug('Open FullScreenshot: no progress listener', error);
     });
   }
 
@@ -149,7 +149,7 @@
     badge().progress(done, total);
     await Promise.all([
       tell(tabId, FS.MSG.CS_PROGRESS, { done, total, label }, SHORT_TIMEOUT_MS).catch((error) => {
-        console.debug('FullShot: HUD update skipped', error);
+        console.debug('Open FullScreenshot: HUD update skipped', error);
       }),
       broadcast(done, total, phase)
     ]);
@@ -183,7 +183,7 @@
       const reply = await tell(tabId, FS.MSG.CS_PING, {}, PING_TIMEOUT_MS, FS.ERR.NO_CONTENT_SCRIPT);
       if (reply && reply.ok) return;
     } catch (error) {
-      console.debug('FullShot: ping failed', error);
+      console.debug('Open FullScreenshot: ping failed', error);
     }
     throw fail(FS.ERR.NO_CONTENT_SCRIPT);
   }
@@ -283,7 +283,7 @@
       await tell(tabId, FS.MSG.CS_RESTORE, {}, SHORT_TIMEOUT_MS);
     } catch (error) {
       // The tab may have navigated or died; nothing left to restore there.
-      console.warn('FullShot: restore failed', error);
+      console.warn('Open FullScreenshot: restore failed', error);
     }
   }
 
@@ -419,7 +419,7 @@
       const fresh = await chrome.tabs.get(tab.id);
       return { title: fresh.title || '', url: fresh.url || '' };
     } catch (error) {
-      console.debug('FullShot: tabs.get unavailable', error);
+      console.debug('Open FullScreenshot: tabs.get unavailable', error);
       return { title: (tab && tab.title) || '', url: (tab && tab.url) || '' };
     }
   }
@@ -431,7 +431,7 @@
       result,
       holds: 0,
       timer: setTimeout(() => {
-        console.warn('FullShot: capture result expired', result.id);
+        console.warn('Open FullScreenshot: capture result expired', result.id);
         drop(result.id);
       }, RESULT_TTL_MS)
     };
@@ -466,7 +466,7 @@
       if (!(await FS.Offscreen.isOpen())) return;
       await FS.Offscreen.send(FS.MSG.OFF_RELEASE, {});
     } catch (error) {
-      console.debug('FullShot: release skipped', error);
+      console.debug('Open FullScreenshot: release skipped', error);
     }
     if (results.size || active) return;
     await FS.Offscreen.close();
@@ -509,14 +509,14 @@
         const reply = await tell(tabId, FS.MSG.CS_CLIPBOARD_WRITE, { dataUrl }, SHORT_TIMEOUT_MS);
         if (reply && reply.ok) return true;
       } catch (error) {
-        console.debug('FullShot: page clipboard refused', error);
+        console.debug('Open FullScreenshot: page clipboard refused', error);
       }
     }
     try {
       const reply = await FS.Offscreen.send(FS.MSG.OFF_CLIPBOARD, {});
       if (reply && reply.ok) return true;
     } catch (error) {
-      console.debug('FullShot: offscreen clipboard refused', error);
+      console.debug('Open FullScreenshot: offscreen clipboard refused', error);
     }
     return false;
   }
@@ -707,7 +707,7 @@
         await toast(tabId, FS.util.t('toast_cancelled'), 'info');
         return info;
       }
-      console.warn('FullShot: capture failed', info.code, error);
+      console.warn('Open FullScreenshot: capture failed', info.code, error);
       badge().error(info.message);
       await toast(tabId, info.message, 'error');
       return info;
