@@ -223,6 +223,14 @@
     "message": "Taille du fichier",
     "description": "Editor status bar label, followed by the encoded byte size."
   },
+  "editor_drag_not_ready": {
+    "message": "Image pas encore prête à glisser — utilisez Enregistrer ou Copier.",
+    "description": "Editor toast shown when a drag-out begins before the edited image has finished encoding. Nothing is exported, so redactions can never leak."
+  },
+  "editor_drag_encode_failed": {
+    "message": "Impossible de préparer l'image pour le glisser-déposer. Utilisez Enregistrer ou Copier.",
+    "description": "Editor toast shown when encoding the edited image for drag-out fails, typically on a very large capture."
+  },
   "popup_fullpage": {
     "message": "Page entière",
     "description": "Popup button — captures the whole scrollable page."

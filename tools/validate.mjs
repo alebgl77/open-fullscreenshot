@@ -350,6 +350,50 @@ function checkDynamicCode() {
 }
 
 // ---------------------------------------------------------------------------
+// 3b. Redaction integrity — only the EDITED image may ever leave the editor
+// ---------------------------------------------------------------------------
+
+/**
+ * README and the editor's own header promise that a redaction is rasterized
+ * into the image, "so the covered content is actually gone". That held for
+ * Save, Copy and PDF but not for drag-out, which fell back to state.objectUrl
+ * — the untouched capture — whenever the edited payload was not ready. The
+ * dropped file then contained exactly what the user had just blacked out, and
+ * because the other three paths were correct, nothing in the UI revealed it.
+ *
+ * These checks are cheap and they are the only thing standing between that
+ * defect and its silent return: the harnesses cannot drive a real OS drop.
+ */
+function checkRedactionIntegrity() {
+  const editorPath = path.join(ROOT, 'src/editor/editor.js');
+  scanLiteralPattern(
+    [editorPath],
+    'drag-out never falls back to the pre-edit image',
+    /state\.dragUrl\s*\|\|\s*state\.objectUrl/g
+  );
+
+  const content = readIfExists(editorPath);
+  const violations = [];
+  if (content == null) {
+    violations.push('src/editor/editor.js is missing');
+  } else {
+    if (!/state\.dragGen\s*\+\+/.test(content)) {
+      violations.push(
+        'src/editor/editor.js: rebuild() must bump state.dragGen and revoke the old drag URL, ' +
+          'so a drop landing mid-encode exports nothing instead of the pre-edit image'
+      );
+    }
+    if (!/gen\s*!==\s*state\.dragGen/.test(content)) {
+      violations.push(
+        'src/editor/editor.js: refreshDragUrl() must discard superseded toBlob callbacks, ' +
+          'otherwise an out-of-order encode can reinstate an obsolete payload'
+      );
+    }
+  }
+  reportGroup('drag-out payload is invalidated on every edit', violations);
+}
+
+// ---------------------------------------------------------------------------
 // 4. No innerHTML/outerHTML/insertAdjacentHTML with interpolation/concatenation
 // ---------------------------------------------------------------------------
 
@@ -547,6 +591,7 @@ function main() {
   const manifest = checkManifest();
   checkForbiddenNetwork();
   checkDynamicCode();
+  checkRedactionIntegrity();
   checkHtmlSinks();
   const enKeys = checkLocaleParity();
   checkI18nKeys(enKeys);

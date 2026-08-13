@@ -81,6 +81,10 @@
     blob: null,
     objectUrl: null,
     dragUrl: null,
+    // Bumped on every edit. A toBlob callback whose generation is stale is
+    // discarded, so an out-of-order encode can never install an obsolete
+    // drag payload over a newer one.
+    dragGen: 0,
     sourceCanvas: null,
     workingCanvas: null,
     ops: [],
@@ -207,6 +211,15 @@
       else if (op.type === 'redact') applyRedact(canvas, op.rect);
     }
     state.workingCanvas = canvas;
+    // Destroy the old drag payload BEFORE the new one is encoded. Revoking
+    // eagerly is the load-bearing part: it turns "stale bytes" into "no bytes",
+    // so a drop landing mid-encode exports nothing rather than the pre-edit
+    // image. Redactions must never survive in a draggable copy.
+    state.dragGen++;
+    if (state.dragUrl) {
+      URL.revokeObjectURL(state.dragUrl);
+      state.dragUrl = null;
+    }
     drawStage();
     updateDimensionsStatus();
     updateUndoResetButtons();
@@ -418,11 +431,16 @@
   // ---------------------------------------------------------------------
 
   function onDragStart(e) {
-    const url = state.dragUrl || state.objectUrl;
+    // NEVER fall back to state.objectUrl: that is the pre-edit capture, and
+    // exporting it would hand out the very pixels a redaction just covered.
+    // No current payload means no payload — the drag still pans the canvas.
+    const url = state.dragUrl;
     if (url) {
       const name = FS.util.sanitizeFilename(state.filenameBase || 'capture') + '.png';
       e.dataTransfer.setData('DownloadURL', `image/png:${name}:${url}`);
       e.dataTransfer.effectAllowed = 'copy';
+    } else {
+      showToast(FS.util.t('editor_drag_not_ready'), 'error');
     }
     dragPanStart = { x: e.clientX, y: e.clientY, panX: state.panX, panY: state.panY };
     viewport.classList.add('panning');
@@ -471,8 +489,17 @@
   }
 
   function refreshDragUrl() {
+    const gen = state.dragGen;
     state.workingCanvas.toBlob((blob) => {
-      if (!blob) return;
+      // A superseded or out-of-order encode must not resurrect old pixels.
+      if (gen !== state.dragGen) return;
+      if (!blob) {
+        // Encoding a canvas near FS.CANVAS_LIMITS can genuinely fail. Say so
+        // instead of leaving dragUrl null, which used to make every drag-out
+        // for the life of this tab fall back to the unedited original.
+        showToast(FS.util.t('editor_drag_encode_failed'), 'error');
+        return;
+      }
       const previous = state.dragUrl;
       state.dragUrl = URL.createObjectURL(blob);
       if (previous) URL.revokeObjectURL(previous);
