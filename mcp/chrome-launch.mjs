@@ -17,8 +17,8 @@
  *   --allow-file-access-from-files
  *        present in test/cdp.mjs for the fixture harness; letting every local
  *        page read every other local file is not something a capture needs.
- * `assertNoForbiddenFlags` enforces this at runtime and test/mcp-cdp.mjs asserts
- * it from the outside.
+ * `assertNoForbiddenFlags` enforces this at runtime, and `node mcp/server.mjs
+ * --selftest` asserts the deny list from the outside.
  */
 import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync } from 'node:fs';
@@ -74,10 +74,9 @@ export function profileDir() {
   return path.join(stateDir(), 'mcp-profile');
 }
 
-/** Default destination for captured images. */
-export function defaultOutputDir() {
-  return path.join(stateDir(), 'out');
-}
+// No `defaultOutputDir()` here on purpose: captures go where `outRoot()` in
+// capture.mjs says, and a second function answering the same question with a
+// different directory is how a report ends up naming a path nothing writes to.
 
 /** mkdir -p, returning the path so callers can inline it. */
 export function ensureDir(dir) {
@@ -102,13 +101,56 @@ function baseArgs({ profile, windowSize }) {
     `--user-data-dir=${profile}`,
     '--no-first-run',
     '--no-default-browser-check',
+    // The capture browser is a tool, not a browser someone lives in. Left to its
+    // own devices it phones home, runs the component updater, and materializes
+    // every extension registered for the machine into its fresh profile — none of
+    // which any capture needs, and all of which would be third-party code sitting
+    // in a directory this server created. Off:
+    '--disable-extensions',
+    // `--disable-extensions` leaves Chrome's own COMPONENT extensions running
+    // (the Hangouts background page, among others); this drops those too.
+    '--disable-component-extensions-with-background-pages',
+    '--disable-background-networking',
+    '--disable-component-update',
+    '--disable-client-side-phishing-detection',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--no-pings',
+    // Capture-quality flags: a backgrounded renderer paints nothing worth having.
     '--disable-background-timer-throttling',
     '--disable-renderer-backgrounding',
     '--disable-backgrounding-occluded-windows',
     '--hide-crash-restore-bubble',
+    '--mute-audio',
     `--window-size=${windowSize}`,
     'about:blank'
   ];
+}
+
+/**
+ * Wait briefly for a child that is on its way out.
+ *
+ * Chrome refuses to share a user-data-dir: a second instance on the same profile
+ * quits at once. When it does, the CDP pipe closes BEFORE node delivers the
+ * child's `exit` event, so reading `exited` the moment the pipe fails is a race
+ * that the useful diagnosis always loses. Giving the event a moment to arrive is
+ * the difference between naming the cause and reporting "pipe closed by Chrome".
+ * @returns {Promise<number|null>} the exit code, or null if it is still running
+ */
+function settleExit(child, getExited, graceMs) {
+  return new Promise((resolve) => {
+    const already = getExited();
+    if (already !== null) return resolve(already);
+    let timer = null;
+    const done = () => {
+      clearTimeout(timer);
+      child.removeListener('exit', onExit);
+      resolve(getExited());
+    };
+    const onExit = () => done();
+    child.once('exit', onExit);
+    timer = setTimeout(done, graceMs);
+  });
 }
 
 /**
@@ -202,9 +244,10 @@ export async function launchBrowser(options = {}) {
   if (child.stderr) child.stderr.on('data', (chunk) => stderr.push(String(chunk)));
   if (child.stdout) child.stdout.resume();
 
-  let exited = null;
-  child.once('exit', (code) => {
-    exited = code;
+  /** @type {{ code: number|null, signal: string|null }|null} */
+  let exitInfo = null;
+  child.once('exit', (code, signal) => {
+    exitInfo = { code, signal };
   });
 
   const pipe = new CdpPipe(child.stdio[3], child.stdio[4]);
@@ -212,18 +255,30 @@ export async function launchBrowser(options = {}) {
   try {
     info = await pipe.send('Browser.getVersion', {}, undefined, options.timeoutMs || 20000);
   } catch (err) {
+    // Let a Chrome that is already quitting finish quitting, so the diagnosis
+    // below is decided by what happened rather than by which event won a race.
+    await settleExit(child, () => exitInfo, 2000);
     try {
       child.kill();
     } catch {
       /* already gone */
     }
+    const busy = exitInfo !== null;
+    const tail = stderr.join('').trim().slice(-300);
     const error = new Error(
-      exited !== null
-        ? `Chrome exited immediately (code ${exited}). Another Chrome is probably already using the ` +
-          `Open FullScreenshot profile at ${profile} — close the login window and retry. ${stderr.join('').slice(-400)}`
-        : `Chrome did not answer on the debugging pipe: ${err.message}`
+      busy
+        ? `Chrome quit immediately (exit code ${exitInfo.code}) instead of answering the debugging pipe. ` +
+          `The capture profile at ${profile} is almost certainly already in use: Chrome allows one process ` +
+          'per user-data-dir, so a SECOND MCP CLIENT running this server at the same time, or a Chrome ' +
+          'window you opened on that profile, will do exactly this. Close the other one and retry.' +
+          (tail ? ` Chrome said: ${tail}` : '')
+        : `Chrome did not answer on the debugging pipe: ${err.message}. If a second MCP client is running ` +
+          `this server, or a Chrome window is open on the capture profile at ${profile}, that is the cause — ` +
+          'Chrome allows one process per user-data-dir. Otherwise Chrome started but never spoke; try again, ' +
+          'and set CHROME_PATH if the wrong binary was found.' +
+          (tail ? ` Chrome said: ${tail}` : '')
     );
-    error.code = 'capture_failed';
+    error.code = busy ? 'profile_busy' : 'capture_failed';
     throw error;
   }
 
