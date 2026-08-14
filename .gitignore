@@ -34,6 +34,7 @@ $RECYCLE.BIN/
 *.swo
 .vscode/
 .idea/
+.claude/
 
 # Logs
 *.log
