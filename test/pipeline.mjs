@@ -17,6 +17,7 @@ import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { launchChrome, sleep } from './cdp.mjs';
+import { STUB, ENGINE_SOURCES } from '../mcp/chrome-stub.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HEADFUL = process.argv.includes('--headful');
@@ -29,117 +30,12 @@ function check(name, ok, detail = '') {
   return ok;
 }
 
-const SOURCES = [
-  'src/shared/protocol.js',
-  'src/shared/util.js',
-  'src/shared/settings.js',
-  'src/background/paced-capture.js',
-  'src/background/offscreen-host.js',
-  'src/background/capture-engine.js',
-  'src/offscreen/offscreen.js',
-  'src/content/page-driver.js'
-];
-
-/** Everything the engine, the stitcher and the driver touch on `chrome`. */
-const STUB = `
-globalThis.__inbox = [];
-globalThis.__created = [];
-globalThis.__downloads = [];
-globalThis.__badge = [];
-globalThis.__shotSeq = 0;
-globalThis.__shotWaiters = {};
-globalThis.__shotCount = 0;
-
-globalThis.__shotResolve = (id, dataUrl) => {
-  const w = globalThis.__shotWaiters[id];
-  if (w) { delete globalThis.__shotWaiters[id]; w(dataUrl); }
-};
-
-globalThis.__trace = [];
-const dispatch = (message) => new Promise((resolve) => {
-  let settled = false;
-  const done = (r) => {
-    if (settled) return;
-    settled = true;
-    const t = message && message.type;
-    if (t === 'cs:prepare' || t === 'cs:goto') globalThis.__trace.push({ t, req: message, reply: r });
-    resolve(r);
-  };
-  let async = false;
-  for (const fn of globalThis.__inbox.slice()) {
-    let ret;
-    try { ret = fn(message, { id: 'test' }, done); } catch (e) { return done({ error: String(e) }); }
-    if (ret === true) async = true;
-  }
-  if (!async) setTimeout(() => done(undefined), 30);
-  setTimeout(() => done({ __timeout: true, type: message && message.type }), 60000);
-});
-
-globalThis.chrome = {
-  runtime: {
-    id: 'test-extension-id',
-    lastError: null,
-    getManifest: () => ({ version: '1.0.0', name: 'Open FullScreenshot' }),
-    getURL: (p) => 'chrome-extension://test/' + p,
-    onMessage: {
-      addListener: (fn) => globalThis.__inbox.push(fn),
-      removeListener: (fn) => { const i = globalThis.__inbox.indexOf(fn); if (i >= 0) globalThis.__inbox.splice(i, 1); }
-    },
-    sendMessage: (msg, cb) => {
-      const p = dispatch(msg);
-      if (typeof cb === 'function') { p.then(cb); return; }
-      return p;
-    }
-  },
-  tabs: {
-    get: async (id) => ({ id, windowId: 1, url: location.href, title: document.title, index: 0 }),
-    query: async () => [{ id: 1, windowId: 1, url: location.href, title: document.title, index: 0 }],
-    create: async (opts) => { globalThis.__created.push(opts); return { id: 99, ...opts }; },
-    sendMessage: (tabId, msg, cb) => {
-      const p = dispatch(msg);
-      if (typeof cb === 'function') { p.then(cb); return; }
-      return p;
-    },
-    captureVisibleTab: (windowId, opts, cb) => {
-      const id = ++globalThis.__shotSeq;
-      globalThis.__shotCount++;
-      const p = new Promise((resolve) => { globalThis.__shotWaiters[id] = resolve; __fsShot(String(id)); });
-      if (typeof cb === 'function') { p.then(cb); return; }
-      if (typeof opts === 'function') { p.then(opts); return; }
-      return p;
-    }
-  },
-  scripting: { executeScript: async () => [{ result: null }] },
-  offscreen: {
-    Reason: { BLOBS: 'BLOBS', CLIPBOARD: 'CLIPBOARD' },
-    createDocument: async () => {},
-    closeDocument: async () => {},
-    hasDocument: async () => true
-  },
-  action: {
-    setBadgeText: async (o) => { globalThis.__badge.push(o && o.text); },
-    setBadgeBackgroundColor: async () => {},
-    setPopup: async () => {},
-    setTitle: async () => {}
-  },
-  downloads: {
-    download: async (o) => { globalThis.__downloads.push(o); return 1; },
-    onChanged: { addListener: () => {}, removeListener: () => {} }
-  },
-  contextMenus: { removeAll: (cb) => cb && cb(), create: () => {}, onClicked: { addListener: () => {} } },
-  commands: { onCommand: { addListener: () => {} }, getAll: async () => [] },
-  i18n: { getMessage: (k) => k },
-  storage: {
-    local: {
-      get: async () => ({ settings: globalThis.__settings || {} }),
-      set: async () => {},
-      remove: async () => {}
-    },
-    onChanged: { addListener: () => {}, removeListener: () => {} }
-  },
-  windows: { get: async () => ({ id: 1 }), getCurrent: async () => ({ id: 1 }) }
-};
-`;
+/**
+ * The engine source list and the `chrome` stub are shared with the MCP server
+ * (mcp/chrome-stub.mjs) so the harness and the product cannot drift: the CDP
+ * backend injects exactly these files, in exactly this order, into a real page.
+ */
+const SOURCES = ENGINE_SOURCES;
 
 async function main() {
   const fixturePath = path.join(ROOT, `test/fixtures/${FIXTURE}.html`);

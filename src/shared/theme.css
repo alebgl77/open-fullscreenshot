@@ -83,6 +83,19 @@ body {
   padding: 0;
 }
 
+/*
+ * `hidden` has to beat a component's own `display`. The UA stylesheet's
+ * `[hidden] { display: none }` sits in a weaker cascade origin than anything
+ * written here, so a rule as ordinary as `.crop-confirm { display: flex }`
+ * silently defeats it and the element stays on screen. The popup, the options
+ * page and the editor all toggle `hidden` on elements that carry a `display`, so
+ * the guard belongs here once rather than per component (as .fs-toast[hidden]
+ * below spells it out for the toast alone).
+ */
+[hidden] {
+  display: none !important;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-size: 14px;
