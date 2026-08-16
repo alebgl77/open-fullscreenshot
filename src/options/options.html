@@ -69,11 +69,11 @@
       <div class="fs-field">
         <label for="opt-maxPixels" data-i18n="options_max_pixels">Maximum capture size</label>
         <select id="opt-maxPixels">
-          <option data-preset="standard" data-i18n="options_max_pixels_standard">Standard (≈268 Mpx)</option>
+          <option data-preset="standard" data-i18n="options_max_pixels_standard">Standard (≈100 Mpx)</option>
           <option data-preset="large" data-i18n="options_max_pixels_large">Large</option>
           <option data-preset="maximum" data-i18n="options_max_pixels_maximum">Maximum</option>
         </select>
-        <p class="fs-field__desc" data-i18n="options_max_pixels_desc">Hard ceiling on the stitched image. Chrome cannot draw a canvas larger than about 268 megapixels.</p>
+        <p class="fs-field__desc" data-i18n="options_max_pixels_desc">Ceiling on the stitched image; anything taller is scaled down to fit. Standard covers pages up to roughly 17 000 px tall and keeps the editor responsive. Large and Maximum go all the way to Chrome's own canvas limit of about 268 megapixels.</p>
       </div>
 
       <div class="fs-field fs-field--checkbox">

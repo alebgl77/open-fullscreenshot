@@ -36,13 +36,28 @@ so:
 
 1. Open a new tab and go to `chrome://extensions/shortcuts` (type or paste
    this — it can't be clicked from inside the extension).
-2. Find the **Open FullScreenshot** section and set/change any of the four commands:
-   - Default action (opens the mode chooser or the configured default mode)
-   - Capture full page
-   - Capture visible area
-   - Capture region/element (selection overlay)
+2. Find the **Open FullScreenshot** section and set/change any of the six
+   commands. The first four arrive with a suggested binding:
+   - Default action (opens the mode chooser or the configured default mode) — `Alt+Shift+P`
+   - Capture full page — `Alt+Shift+F`
+   - Capture visible area — `Alt+Shift+V`
+   - Capture region/element (selection overlay) — `Alt+Shift+R`
+
+   The last two arrive with **no** binding, and stay inert until you give them
+   one here:
+   - Capture the full page and copy it to the clipboard
+   - Select an area and copy it to the clipboard
+
+   That is not an oversight: Chrome honours `suggested_key` for at most four
+   commands per extension, and the four above spend the budget. A fifth
+   suggested key would be accepted by the manifest and bind nothing, which is
+   why these two ask you instead. Both skip the editor and put the image
+   straight on the clipboard, for that capture only — no setting changes.
 3. Chrome shows a red warning if a combination is already used elsewhere in
    the browser — pick a different one in that case.
+
+If you would rather bind nothing, hold `Shift` while clicking a capture button
+in the extension's popup: same one-capture override, same clipboard result.
 
 ## 4. Build a distributable zip
 

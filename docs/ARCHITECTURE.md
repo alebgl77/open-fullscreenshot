@@ -157,7 +157,8 @@ user gesture (action click | command | context menu)
      │    badge + CS_PROGRESS
      ├─ CS_RESTORE  (always, including on error/cancel — use try/finally)
      ├─ OFF_EXPORT { format, quality, crop }          → { url, width, height, byteLength }
-     └─ dispatch per settings.afterCapture (§7)
+     └─ dispatch per settings.afterCapture, or per the gesture's one-run
+        `after` override when it carries one (§7)
 ```
 
 Cancellation: the content script listens for `Escape` and sends `BG_CANCEL`. The
@@ -321,6 +322,15 @@ consumer is done, or after a 90 s safety timeout.
 | `copy` | Clipboard, see below. |
 | `download-copy` | Both. |
 
+**Per-capture override.** `UI_CAPTURE` accepts an optional `after`, and the
+`copy-fullpage` / `copy-region` commands carry one. `mergeAfter()` in
+`service-worker.js` validates it against `FS.Settings.ENUMS.afterCapture` — the
+same enum that governs the stored setting, never a copy of the list — and
+returns a shallow clone of the settings with `afterCapture` replaced. An absent
+or unrecognized value returns the settings object untouched, so the default path
+is byte-identical to what it was before the field existed. Nothing is written to
+storage: choosing the clipboard for one capture must not choose it for the next.
+
 **Clipboard** must be attempted in this order, because only the first has a real
 chance of holding focus:
 
@@ -399,6 +409,13 @@ capture settings — each with its keyboard shortcut displayed on the right, plu
 gear opening the options page. Sends `UI_CAPTURE { mode }` and closes itself
 immediately (`window.close()`), because the popup stealing focus interferes with
 capture.
+
+`Shift`+click on a capture button sends `UI_CAPTURE { mode, after: 'copy' }`
+instead, which is the one-run override of §7 — the image lands on the clipboard
+and no editor tab opens. A localized hint line under the buttons states this, and
+the popup mirrors the live `Shift` state onto its root element so the affordance
+is visible before the click, not only in documentation. A plain click still sends
+`{ mode }` with no extra field.
 
 ### 9.3 Editor — `src/editor/` (task C)
 

@@ -17,6 +17,13 @@ glisse-dépose vers un dossier.
 Quatre raccourcis clavier, tels que déclarés dans le manifeste : `Alt+Shift+P` action par défaut,
 `Alt+Shift+F` page entière, `Alt+Shift+V` zone visible, `Alt+Shift+R` région ou élément.
 
+Deux commandes supplémentaires copient la capture directement dans le presse-papiers, page entière
+ou région, sans passer par l'éditeur. Chrome n'accepte que quatre raccourcis suggérés par
+extension : elles sont donc livrées sans raccourci et s'assignent dans
+`chrome://extensions/shortcuts`. Sans rien assigner, un `Maj`+clic sur un bouton du menu produit le
+même résultat. Dans les deux cas, le réglage « Après la capture » n'est modifié que pour cette
+capture-là, et rien n'est enregistré.
+
 L'extension fonctionne entièrement hors ligne : aucune requête réseau, aucune télémétrie, aucun
 compte. Elle ne déclare **aucune permission d'hôte** — Chrome n'affichera donc jamais
 l'avertissement « lire et modifier vos données sur tous les sites web » à son sujet, parce qu'elle
@@ -86,6 +93,35 @@ Enabling `file://` access, binding the shortcuts and the manual smoke-test check
 Those are the suggested defaults; rebind any of them at `chrome://extensions/shortcuts`. Chrome
 forbids an extension page from linking to that screen, so Options renders the address as selectable
 text with a copy button instead of a dead link.
+
+**Two more commands ship unbound, on purpose.**
+
+| Command | What it does |
+|---|---|
+| Capture the full page and copy it to the clipboard | Full page straight to the clipboard — no editor tab, no file |
+| Select an area and copy it to the clipboard | Selection overlay, then straight to the clipboard |
+
+Chrome honours `suggested_key` for at most four commands per extension, and the four above already
+spend that budget. A fifth suggested binding would be accepted by the manifest and then quietly
+bind nothing, so these two are declared with no key at all: pick your own at
+`chrome://extensions/shortcuts`, where they appear alongside the others. They do not change any
+setting — each one overrides "After capture" for the single capture it starts.
+
+The same shortcut is available without binding anything: **hold `Shift` while clicking a capture
+button in the popup** and that capture goes to the clipboard instead of the editor. The popup says
+so under its buttons, and the buttons light up while `Shift` is down.
+
+What that costs, in gestures — a keystroke, a click, or one drag of the selection overlay, on
+default settings (captures open in the editor, which does not close itself):
+
+| Journey | Before | Bound copy command | Popup, Shift+click |
+|---|---|---|---|
+| Full page → file | 3 — `Alt+Shift+F`, **Save**, close the tab | 3 (unchanged) | 3 (unchanged) |
+| Full page → clipboard | 3 — `Alt+Shift+F`, **Copy**, close the tab | **1** | 2 — `Alt+Shift+P`, Shift+click |
+| Region → clipboard | 4 — `Alt+Shift+R`, select, **Copy**, close the tab | **2** — shortcut, select | 3 |
+
+Setting **After capture** to **Copy to clipboard** in Options reaches 1 gesture too, but it does so
+for *every* capture; that is the trade this pair of commands exists to avoid.
 
 The toolbar button behaves the same way as `Alt+Shift+P`. Set **Toolbar click** to **Ask every
 time** in Options and it stops capturing on its own, opening a chooser instead:
@@ -306,10 +342,15 @@ page instead of testing an installed build.
   Turn on "Allow access to file URLs" for Open FullScreenshot at `chrome://extensions` to capture
   local HTML.
 - **Very long pages get downscaled.** A single 2D canvas in Chrome tops out at 65 535 px per side
-  and 268 435 456 px of area, and the shipped ceiling sits just under it: `maxPixels` defaults to
-  268 000 000, which Options presents as "Standard (≈268 Mpx)" next to Large and Maximum. Whichever
-  bound bites first, the image is scaled down to fit and flagged as truncated in the editor, rather
-  than silently corrupted or refused outright.
+  and 268 435 456 px of area. The shipped default deliberately sits below that: `maxPixels` defaults
+  to 100 000 000, which Options presents as "Standard (≈100 Mpx)" next to Large and Maximum — both
+  of which still go all the way up to Chrome's own ceiling. What 100 Mpx buys depends on your window
+  and display: about 17 000 CSS px of page height on a 1440-wide window at DPR 2, but around 9 700 on
+  a 2560-wide one, since the ceiling is on area. It holds each of the editor's three live full-size
+  buffers to 400 MB, so 1.2 GB in the worst case rather than the 3.2 GB the old default allowed —
+  still a large number, which is why the ceiling exists at all. Whichever bound
+  bites first, the image is scaled down to fit and flagged as truncated in the editor, rather than
+  silently corrupted or refused outright.
 - **A full-page capture takes seconds, not milliseconds.** `tabs.captureVisibleTab` is rate-limited
   and the pacer backs off when Chrome pushes back, so tall pages are bounded by that quota rather
   than by any work this code does. Measured through the MCP server on this machine: a 1265 × 24391

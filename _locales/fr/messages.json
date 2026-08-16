@@ -27,6 +27,14 @@
     "message": "Sélectionner une zone à capturer",
     "description": "Description of the capture-region keyboard command in chrome://extensions/shortcuts."
   },
+  "cmd_copy_fullpage": {
+    "message": "Capturer la page entière et la copier dans le presse-papiers",
+    "description": "Description of the copy-fullpage keyboard command in chrome://extensions/shortcuts. This command ships with no suggested shortcut — Chrome accepts at most four — so the user assigns it there."
+  },
+  "cmd_copy_region": {
+    "message": "Sélectionner une zone et la copier dans le presse-papiers",
+    "description": "Description of the copy-region keyboard command in chrome://extensions/shortcuts. This command ships with no suggested shortcut — Chrome accepts at most four — so the user assigns it there."
+  },
   "menu_capture_fullpage": {
     "message": "Capturer la page entière",
     "description": "Right-click context menu item."
@@ -89,7 +97,7 @@
   },
   "select_hint_keys": {
     "message": "Entrée pour confirmer, Échap pour annuler",
-    "description": "On-page hint shown by the selection overlay."
+    "description": "Hint for the confirm/cancel key pair, shown by the on-page selection overlay and as the tooltip of the editor's crop-confirm button."
   },
   "err_restricted_url": {
     "message": "Cette page ne peut pas être capturée par une extension.",
@@ -251,6 +259,10 @@
     "message": "non défini",
     "description": "Shown next to a capture button in the popup or options page when no keyboard shortcut is assigned in chrome://extensions/shortcuts."
   },
+  "popup_copy_hint": {
+    "message": "Maintenez Maj en cliquant sur une capture pour la copier directement dans le presse-papiers.",
+    "description": "Hint line under the popup buttons. Shift+click overrides the 'After capture' setting for that one capture: the image goes to the clipboard instead of opening the editor, and nothing is saved."
+  },
   "options_section_capture": {
     "message": "Capture",
     "description": "Options page section heading."
@@ -340,11 +352,11 @@
     "description": "Options field label for the maxPixels setting."
   },
   "options_max_pixels_desc": {
-    "message": "Plafond absolu de l'image assemblée. Chrome ne peut pas dessiner une image de plus de 268 mégapixels environ.",
+    "message": "Plafond de l'image assemblée ; au-delà, l'image est réduite pour tenir. Le plafond porte sur la surface totale : la hauteur de page couverte dépend donc de la largeur de votre fenêtre. Standard atteint environ 17 000 px sur une fenêtre de 1440 px à DPR 2, ou environ 9 700 px sur une fenêtre de 2560 px, et garde l'éditeur réactif. Grande et Maximum vont jusqu'à la limite propre à Chrome, environ 268 mégapixels.",
     "description": "Options field help text for the maxPixels setting."
   },
   "options_max_pixels_standard": {
-    "message": "Standard (≈268 Mpx)",
+    "message": "Standard (≈100 Mpx)",
     "description": "maxPixels preset — the default budget."
   },
   "options_max_pixels_large": {

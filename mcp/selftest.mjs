@@ -17,7 +17,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LineSplitter } from './rpc.mjs';
-import { outRoot, resolveOutDir, safeFilename, untrustedText } from './capture.mjs';
+import { capture, outRoot, resolveOutDir, safeFilename, untrustedText } from './capture.mjs';
 import { FORBIDDEN_FLAGS, assertNoForbiddenFlags } from './chrome-launch.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -495,6 +495,41 @@ export async function selftest() {
     'Chrome refuses to launch with a flag from the deny list (no debugging port, no side-loaded extension)',
     smuggled === null && FORBIDDEN_FLAGS.includes('--remote-debugging-port'),
     smuggled ? `${smuggled} was accepted` : FORBIDDEN_FLAGS.join(' ')
+  );
+
+  // 23. The capture queue is bounded. Captures run one at a time but requests
+  //     are dispatched concurrently, so a batch of five at the 180 s ceiling
+  //     would leave the client with nothing to read for a quarter of an hour.
+  //     Still no Chrome: every spec here is refused on its out_dir, which
+  //     `runCapture` resolves before it asks for a browser.
+  const doomed = () => ({
+    mode: 'visible',
+    url: 'https://example.com',
+    outDir: path.join(os.homedir(), 'ofs-selftest-queue-probe')
+  });
+  // Enqueued in one synchronous burst, which is how a batched tool call arrives.
+  const burst = [];
+  for (let i = 0; i < 5; i++) burst.push(capture(doomed()));
+  const settled = await Promise.allSettled(burst);
+  const reasons = settled.map((r) => String((r.reason && r.reason.message) || r.status));
+  // Match on the invariant the message must carry — that captures run one at a
+  // time — rather than on its exact wording, so rephrasing the text for accuracy
+  // does not fail a test about queue behaviour.
+  const refused = reasons.filter((m) => /one at a time/.test(m));
+  // The depth must fall again as the queue drains, or the limit is a one-way
+  // latch that bricks the server for the rest of its life.
+  const afterDrain = await capture(doomed()).then(
+    () => '(unexpectedly succeeded)',
+    (error) => String(error.message)
+  );
+  check(
+    'a batch of captures past the queue limit is refused with an actionable message, and the depth drains',
+    settled.every((r) => r.status === 'rejected') &&
+      refused.length === 2 &&
+      /[Ww]ait for them/.test(refused[0] || '') &&
+      !/one at a time/.test(afterDrain) &&
+      /out_dir/.test(afterDrain),
+    `${refused.length} of 5 refused: ${refused[0] || reasons.join(' | ').slice(0, 120)}`
   );
 
   const failed = results.filter((r) => !r.ok);

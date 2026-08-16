@@ -85,6 +85,10 @@
     // discarded, so an out-of-order encode can never install an obsolete
     // drag payload over a newer one.
     dragGen: 0,
+    // False until this capture has produced its first drag payload. The first
+    // encode runs immediately; only later ones are debounced. See
+    // refreshDragUrl().
+    dragEncoded: false,
     sourceCanvas: null,
     workingCanvas: null,
     ops: [],
@@ -101,7 +105,8 @@
   let pendingSelection = null; // { startX, startY } in canvas-px space, while dragging
   let pendingCrop = null; // finalized crop rect awaiting confirm
   let dragPanStart = null; // native-drag pan tracking
-  let encodeTimer = null;
+  let encodeTimer = null; // status-bar size, jpeg/webp only
+  let dragTimer = null; // drag-out payload, always png
   let toastTimer = null;
 
   // ---------------------------------------------------------------------
@@ -205,10 +210,31 @@
   }
 
   function rebuild() {
-    let canvas = copyCanvas(state.sourceCanvas);
-    for (const op of state.ops) {
-      if (op.type === 'crop') canvas = cropCanvas(canvas, op.rect);
-      else if (op.type === 'redact') applyRedact(canvas, op.rect);
+    // Drop the previous working canvas BEFORE allocating the next one. Held
+    // across the allocation it would be a fourth full-size RGBA buffer (source,
+    // old working, new working, stage) on the heap at once; released first, the
+    // peak is three. Nothing between here and the reassignment reads it, and
+    // rebuild() is synchronous, so no timer can observe the null.
+    //
+    // The previous canvas is kept in a local and put back if the rebuild throws.
+    // Releasing early is what makes this rebuild survivable on a large image, but
+    // it must not make a FAILED rebuild permanent: copyCanvas() throws when
+    // getContext('2d') returns null under memory pressure, and every later reader
+    // (drawStage, updateDimensionsStatus, applyTransform) dereferences the field
+    // unguarded. Being less robust exactly at the moment we are short of memory
+    // would defeat the point of the change.
+    const previous = state.workingCanvas;
+    state.workingCanvas = null;
+    let canvas;
+    try {
+      canvas = copyCanvas(state.sourceCanvas);
+      for (const op of state.ops) {
+        if (op.type === 'crop') canvas = cropCanvas(canvas, op.rect);
+        else if (op.type === 'redact') applyRedact(canvas, op.rect);
+      }
+    } catch (err) {
+      state.workingCanvas = previous;
+      throw err;
     }
     state.workingCanvas = canvas;
     // Destroy the old drag payload BEFORE the new one is encoded. Revoking
@@ -374,6 +400,13 @@
     pendingCrop = null;
   }
 
+  function commitCrop() {
+    if (!pendingCrop) return;
+    pushOp({ type: 'crop', rect: pendingCrop });
+    setTool('none');
+    fitToView();
+  }
+
   function onSelectionStart(e) {
     if (e.button !== 0) return;
     if (state.tool !== 'crop' && state.tool !== 'redact') return;
@@ -469,18 +502,36 @@
     statusDimensions.textContent = FS.util.t('editor_dimensions', [String(c.width), String(c.height)]);
   }
 
+  function setEncodedSizeText(bytes) {
+    statusSize.textContent = FS.util.t('editor_size', [FS.util.formatBytes(bytes)]);
+  }
+
+  /**
+   * Byte count for the status bar, in the CHOSEN format.
+   *
+   * png is deliberately not encoded here: the drag payload is already a png of
+   * this exact canvas, so refreshDragUrl() hands its blob.size over and the
+   * editor pays for one full-canvas encode per edit instead of two.
+   */
   function refreshEncodedSize() {
     clearTimeout(encodeTimer);
     if (state.format === 'pdf') {
       statusSize.textContent = FS.util.t('editor_size', ['—']);
       return;
     }
+    if (state.format === 'png') {
+      // Covers the format-switch path too: no edit happened, so re-arm the
+      // drag encode (same timer, so still a single encode) to get the number.
+      refreshDragUrl();
+      return;
+    }
     encodeTimer = setTimeout(() => {
+      if (!state.workingCanvas) return;
       const mime = FS.util.mimeFor(state.format);
       const quality = state.format === 'jpeg' || state.format === 'webp' ? state.quality : undefined;
       canvasToBlob(state.workingCanvas, mime, quality)
         .then((blob) => {
-          statusSize.textContent = FS.util.t('editor_size', [FS.util.formatBytes(blob.size)]);
+          setEncodedSizeText(blob.size);
         })
         .catch(() => {
           /* leave the previous value in place */
@@ -488,22 +539,46 @@
     }, 250);
   }
 
+  /**
+   * Re-encode the drag-out payload, debounced by the same 250 ms as the status
+   * bar so a burst of edits costs one encode rather than one per edit.
+   *
+   * The debounce widens the window in which state.dragUrl is null, which is
+   * safe only because a drag landing in that window exports NOTHING: rebuild()
+   * revokes the old URL eagerly, onDragStart refuses to fall back to the
+   * pre-edit image and says so via `editor_drag_not_ready`, and the dragGen
+   * check below drops any callback a newer edit has superseded.
+   *
+   * The FIRST encode of a capture is not debounced. Safe is not the same as
+   * good: debouncing it too would mean a drag started within 250 ms of the
+   * editor appearing fails on the happy path, with nothing edited and nothing
+   * to coalesce — a new first-gesture failure traded for a saving that only
+   * exists when edits arrive in a burst. Delay only what there is a reason to
+   * delay.
+   */
   function refreshDragUrl() {
+    clearTimeout(dragTimer);
     const gen = state.dragGen;
-    state.workingCanvas.toBlob((blob) => {
-      // A superseded or out-of-order encode must not resurrect old pixels.
-      if (gen !== state.dragGen) return;
-      if (!blob) {
-        // Encoding a canvas near FS.CANVAS_LIMITS can genuinely fail. Say so
-        // instead of leaving dragUrl null, which used to make every drag-out
-        // for the life of this tab fall back to the unedited original.
-        showToast(FS.util.t('editor_drag_encode_failed'), 'error');
-        return;
-      }
-      const previous = state.dragUrl;
-      state.dragUrl = URL.createObjectURL(blob);
-      if (previous) URL.revokeObjectURL(previous);
-    }, 'image/png');
+    const delay = state.dragEncoded ? 250 : 0;
+    state.dragEncoded = true;
+    dragTimer = setTimeout(() => {
+      if (!state.workingCanvas) return;
+      state.workingCanvas.toBlob((blob) => {
+        // A superseded or out-of-order encode must not resurrect old pixels.
+        if (gen !== state.dragGen) return;
+        if (!blob) {
+          // Encoding a canvas near FS.CANVAS_LIMITS can genuinely fail. Say so
+          // instead of leaving dragUrl null, which used to make every drag-out
+          // for the life of this tab fall back to the unedited original.
+          showToast(FS.util.t('editor_drag_encode_failed'), 'error');
+          return;
+        }
+        const previous = state.dragUrl;
+        state.dragUrl = URL.createObjectURL(blob);
+        if (previous) URL.revokeObjectURL(previous);
+        if (state.format === 'png') setEncodedSizeText(blob.size);
+      }, 'image/png');
+    }, delay);
   }
 
   // ---------------------------------------------------------------------
@@ -614,6 +689,14 @@
       return;
     }
     if (typing) return;
+    if (e.key === 'Enter' && pendingCrop) {
+      // Same gesture as the on-page selection overlay, which already commits on
+      // Enter and advertises it. preventDefault also stops the browser turning
+      // this into a synthetic click when the confirm button holds focus.
+      e.preventDefault();
+      commitCrop();
+      return;
+    }
     if (e.key === '0') {
       e.preventDefault();
       fitToView();
@@ -691,12 +774,7 @@
     zoomInBtn.addEventListener('click', () => zoomStep(ZOOM_STEP));
     zoomFitBtn.addEventListener('click', fitToView);
 
-    cropConfirmBtn.addEventListener('click', () => {
-      if (!pendingCrop) return;
-      pushOp({ type: 'crop', rect: pendingCrop });
-      setTool('none');
-      fitToView();
-    });
+    cropConfirmBtn.addEventListener('click', commitCrop);
     cropCancelBtn.addEventListener('click', () => setTool('none'));
 
     viewport.addEventListener('wheel', onWheel, { passive: false });
@@ -755,14 +833,19 @@
       state.blob = blob;
       state.objectUrl = URL.createObjectURL(blob);
 
-      sendMessage({ type: FS.MSG.UI_RELEASE_CAPTURE, id }).catch((err) => {
-        console.warn('Open FullScreenshot: release-capture failed', err);
-      });
-
       await loadImage();
       bootstrapUiFromResult(result);
       rebuild();
       fitToView();
+
+      // Release only once the image is decoded, rebuilt and on screen. Until
+      // this send lands the background still holds the capture for its TTL, so
+      // ANY failure above — a decode error, an allocation failure in rebuild()
+      // on a very large canvas — leaves a reload of this tab able to recover.
+      // Releasing first would have made every such failure permanent.
+      sendMessage({ type: FS.MSG.UI_RELEASE_CAPTURE, id }).catch((err) => {
+        console.warn('Open FullScreenshot: release-capture failed', err);
+      });
     } catch (err) {
       console.warn('Open FullScreenshot: editor bootstrap failed', err);
       showEmptyState();

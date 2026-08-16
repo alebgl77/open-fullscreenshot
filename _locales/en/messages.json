@@ -27,6 +27,14 @@
     "message": "Select an area to capture",
     "description": "Description of the capture-region keyboard command in chrome://extensions/shortcuts."
   },
+  "cmd_copy_fullpage": {
+    "message": "Capture the full page and copy it to the clipboard",
+    "description": "Description of the copy-fullpage keyboard command in chrome://extensions/shortcuts. This command ships with no suggested shortcut — Chrome accepts at most four — so the user assigns it there."
+  },
+  "cmd_copy_region": {
+    "message": "Select an area and copy it to the clipboard",
+    "description": "Description of the copy-region keyboard command in chrome://extensions/shortcuts. This command ships with no suggested shortcut — Chrome accepts at most four — so the user assigns it there."
+  },
   "menu_capture_fullpage": {
     "message": "Capture full page",
     "description": "Right-click context menu item."
@@ -89,7 +97,7 @@
   },
   "select_hint_keys": {
     "message": "Enter to confirm, Esc to cancel",
-    "description": "On-page hint shown by the selection overlay."
+    "description": "Hint for the confirm/cancel key pair, shown by the on-page selection overlay and as the tooltip of the editor's crop-confirm button."
   },
   "err_restricted_url": {
     "message": "This page can't be captured by an extension.",
@@ -251,6 +259,10 @@
     "message": "not set",
     "description": "Shown next to a capture button in the popup or options page when no keyboard shortcut is assigned in chrome://extensions/shortcuts."
   },
+  "popup_copy_hint": {
+    "message": "Hold Shift while clicking a capture to copy it straight to the clipboard.",
+    "description": "Hint line under the popup buttons. Shift+click overrides the 'After capture' setting for that one capture: the image goes to the clipboard instead of opening the editor, and nothing is saved."
+  },
   "options_section_capture": {
     "message": "Capture",
     "description": "Options page section heading."
@@ -340,11 +352,11 @@
     "description": "Options field label for the maxPixels setting."
   },
   "options_max_pixels_desc": {
-    "message": "Hard ceiling on the stitched image. Chrome cannot draw a canvas larger than about 268 megapixels.",
+    "message": "Ceiling on the stitched image; anything taller is scaled down to fit. The ceiling is on total area, so how tall a page it covers depends on your window width: Standard reaches roughly 17 000 px on a 1440-wide window at DPR 2, or about 9 700 px on a 2560-wide one, and keeps the editor responsive. Large and Maximum go all the way to Chrome's own canvas limit of about 268 megapixels.",
     "description": "Options field help text for the maxPixels setting."
   },
   "options_max_pixels_standard": {
-    "message": "Standard (≈268 Mpx)",
+    "message": "Standard (≈100 Mpx)",
     "description": "maxPixels preset — the default budget."
   },
   "options_max_pixels_large": {

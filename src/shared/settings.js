@@ -32,8 +32,25 @@
     settleMs: 0,
     /** 'device' keeps the full HiDPI resolution, 'css' downsamples to 1x. */
     scaleMode: 'device', // 'device' | 'css'
-    /** Hard ceiling on the stitched image, in pixels of area. */
-    maxPixels: 268000000,
+    /**
+     * Ceiling on the stitched image, in pixels of area.
+     *
+     * NOT Chrome's limit — that is FS.CANVAS_LIMITS (65 535 px per side,
+     * 268 435 456 px of area) and it stays the hard maximum anyone can dial up
+     * to in Options. This is the *default* budget, and it is deliberately well
+     * under the canvas ceiling for two reasons. First, at 268 Mpx the area
+     * ceiling was dead configuration: it only bites below MAX_SIDE for images
+     * wider than 268 435 456 / 65 535 ≈ 4090 device px, so for anyone under
+     * ~2048 CSS px at DPR 2 it never fired at all. Second, what it did allow is
+     * more than the editor can hold — a 268 Mpx RGBA buffer is ~1.07 GB, and
+     * the editor keeps three of them live (source, working, stage).
+     *
+     * At 100 Mpx the area ceiling is the binding constraint above ~1526 device
+     * px of width, and a 1440 CSS-px viewport at DPR 2 gets 100e6 / 2880 ≈
+     * 34 722 device px ≈ 17 361 CSS px of page height before anything is
+     * downscaled — past the tail of real pages, comfortably inside the editor.
+     */
+    maxPixels: 100000000,
     /** On-page progress HUD with Escape-to-cancel. */
     showHud: true,
     /** UI chrome. */

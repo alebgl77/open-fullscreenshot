@@ -56,6 +56,12 @@
     "capture-region": {
       "suggested_key": { "default": "Alt+Shift+R" },
       "description": "__MSG_cmd_region__"
+    },
+    "copy-fullpage": {
+      "description": "__MSG_cmd_copy_fullpage__"
+    },
+    "copy-region": {
+      "description": "__MSG_cmd_copy_region__"
     }
   }
 }

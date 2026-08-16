@@ -35,9 +35,11 @@
 
   /**
    * "Human terms" presets for maxPixels (a raw pixel-area number is not a
-   * usable control). Large/Maximum intentionally ask for more than Chrome's
-   * canvas ceiling — FS.Settings.set() clamps to FS.CANVAS_LIMITS.MAX_AREA,
-   * so both simply resolve to "as large as Chrome allows".
+   * usable control). Standard is the shipped default and the only one that
+   * actually bounds anything below Chrome's own limit; Large/Maximum
+   * intentionally ask for more than Chrome's canvas ceiling —
+   * FS.Settings.set() clamps to FS.CANVAS_LIMITS.MAX_AREA, so both simply
+   * resolve to "as large as Chrome allows".
    */
   const MAXPIXELS_PRESETS = [
     { preset: 'standard', value: FS.Settings.DEFAULTS.maxPixels },

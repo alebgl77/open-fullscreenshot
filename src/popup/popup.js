@@ -5,6 +5,11 @@
  * "More…" context menu item. Sends a capture request and closes itself
  * immediately: holding focus interferes with the capture that follows.
  *
+ * Shift+click on a capture button adds `after: 'copy'` to that one request,
+ * which sends the image straight to the clipboard instead of opening the
+ * editor. It is an override for that capture only — nothing is persisted, and
+ * a plain click is byte-for-byte the message it has always been.
+ *
  * Classic script — protocol.js, util.js and settings.js are loaded before
  * this file (see popup.html).
  */
@@ -12,6 +17,14 @@
   'use strict';
 
   const FS = globalThis.FS;
+
+  /**
+   * Value sent as UI_CAPTURE's `after` for a Shift+click. It is a member of the
+   * afterCapture enum in settings.js; the background validates it against that
+   * same enum and ignores anything it does not recognize, so a typo here can
+   * only ever fall back to the user's stored preference.
+   */
+  const AFTER_COPY = 'copy';
 
   /**
    * Live shortcuts, keyed by command name. Falls back to the manifest's
@@ -56,9 +69,31 @@
     });
   }
 
-  function sendCapture(mode) {
-    chrome.runtime.sendMessage({ type: FS.MSG.UI_CAPTURE, mode });
+  /**
+   * @param {string} mode FS.MODE value
+   * @param {string} [after] one-run afterCapture override. Omitted entirely
+   *   unless asked for, so a plain click sends the exact message it always did.
+   */
+  function sendCapture(mode, after) {
+    const message = { type: FS.MSG.UI_CAPTURE, mode };
+    if (after) message.after = after;
+    chrome.runtime.sendMessage(message);
     window.close();
+  }
+
+  /**
+   * Mirror the live Shift state onto the popup root, so the hint (and the
+   * capture buttons' border) show what the next click will do. Keyboard
+   * activation is covered too: Shift+Enter on a focused button fires a click
+   * carrying shiftKey, and the same handler reads it.
+   */
+  function trackShift(root) {
+    if (!root) return;
+    const sync = (event) => root.classList.toggle('fs-popup--shift', !!event.shiftKey);
+    document.addEventListener('keydown', sync);
+    document.addEventListener('keyup', sync);
+    // Releasing Shift while another window has focus never reaches us.
+    window.addEventListener('blur', () => root.classList.remove('fs-popup--shift'));
   }
 
   function openOptions() {
@@ -81,8 +116,15 @@
     FS.util.localizeDocument();
     applyTheme();
 
+    trackShift(document.querySelector('.fs-popup'));
+
     document.querySelectorAll('.fs-popup__btn[data-mode]').forEach((btn) => {
-      btn.addEventListener('click', () => sendCapture(btn.getAttribute('data-mode')));
+      btn.addEventListener('click', (event) => {
+        // Shift is the one-gesture path to the clipboard: it overrides
+        // afterCapture for this capture alone and stores nothing, so the next
+        // capture behaves however the user configured it.
+        sendCapture(btn.getAttribute('data-mode'), event.shiftKey ? AFTER_COPY : undefined);
+      });
     });
 
     const optionsBtn = document.getElementById('fs-options-btn');

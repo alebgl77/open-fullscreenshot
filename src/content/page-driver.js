@@ -39,6 +39,8 @@
   const LAZY_STEP_MS = 60;
   const LAZY_SETTLE_MS = 250;
   const LAZY_MAX_STEPS = 80;
+  /** Consecutive quiet steps that end the pre-pass early — see lazyPrePass(). */
+  const LAZY_QUIET_STEPS = 2;
   const TOAST_MS = 2600;
 
   /** ARCHITECTURE §5.3 step 3, verbatim. No interpolation, ever. */
@@ -323,29 +325,110 @@
   }
 
   /**
-   * ARCHITECTURE §5.3 step 5. Skipped on short pages, where nothing is below
-   * the fold anyway. Bounded by LAZY_MAX_STEPS so an infinite feed cannot turn
-   * this into a minute-long scroll.
+   * Retag every `loading="lazy"` image as eager, and report how many were newly
+   * retagged. Re-running it after each pre-pass step is what makes that count
+   * worth having: an image already retagged no longer reads as `lazy`, so the
+   * return value is exactly the number of lazy images the page has mounted
+   * since the previous step — and those images now load without waiting to be
+   * scrolled into view, which the old one-shot pass never did for anything a
+   * feed appended mid-walk.
    */
-  async function lazyPrePass() {
-    const m = measure();
-    if (m.fullHeight < m.viewportHeight * 1.5) return;
-
+  function markLazyImages() {
+    let retagged = 0;
     eachElement((el) => {
       // tagName keeps its case in XHTML/XML documents.
       if (String(el.tagName || '').toUpperCase() !== 'IMG') return;
       if (el.getAttribute('loading') !== 'lazy') return;
       el.setAttribute(ATTR_LAZY, '');
       el.setAttribute('loading', 'eager');
+      retagged++;
     });
+    return retagged;
+  }
+
+  /**
+   * How many images the document holds and how many are still in flight. Both
+   * numbers move while a lazy loader is mounting or resolving images, so a step
+   * that changes neither is a step that revealed nothing.
+   */
+  function imageCensus() {
+    let total = 0;
+    let pending = 0;
+    try {
+      const imgs = document.images;
+      total = Math.max(0, Math.round(finiteOr(imgs && imgs.length, 0)));
+      const count = Math.min(total, WALK_LIMIT);
+      for (let i = 0; i < count; i++) {
+        try {
+          if (!imgs[i].complete) pending++;
+        } catch (_) {
+          /* one hostile element must never abort the census */
+        }
+      }
+    } catch (_) {
+      /* no usable document.images here — the retag count still drives the loop */
+    }
+    return { total: total, pending: pending };
+  }
+
+  /**
+   * ARCHITECTURE §5.3 step 5. Skipped on short pages, where nothing is below
+   * the fold anyway. Bounded by LAZY_MAX_STEPS so an infinite feed cannot turn
+   * this into a minute-long scroll, and cut short well before that ceiling once
+   * the page stops producing content: a tall static page (documentation, a
+   * plain article) has nothing to reveal and used to pay the whole walk anyway.
+   */
+  async function lazyPrePass() {
+    const m = measure();
+    if (m.fullHeight < m.viewportHeight * 1.5) return;
+
+    markLazyImages();
 
     const step = Math.max(1, m.viewportHeight * 0.85);
     const maxY = Math.max(0, m.fullHeight - m.viewportHeight);
     const origin = readScroll();
+    let census = imageCensus();
+    let height = m.fullHeight;
+    let quiet = 0;
+
     for (let i = 1, y = step; y <= maxY && i <= LAZY_MAX_STEPS; i++, y += step) {
       writeScroll(origin.x, y);
       await FS.util.sleep(LAZY_STEP_MS);
+
+      // Read the signals only after the step has settled: images the page just
+      // mounted, <img> nodes appearing or being recycled away, images still
+      // loading — and the document height.
+      //
+      // Height is the one that gives this guard its BREADTH, and it is not
+      // optional. The three image signals only see <img>; a page that mounts
+      // below-fold content any other way — a lazy <iframe>, an
+      // IntersectionObserver swapping in a background-image, a JS-rendered
+      // section, a virtual list keyed on text — emits nothing they can read, so
+      // without this the walk would stop two steps in and every tile below that
+      // point would be captured blank. Content that mounts almost always makes
+      // the document grow, and one layout read per step is far cheaper than the
+      // scroll step it guards.
+      const retagged = markLazyImages();
+      const next = imageCensus();
+      const nextHeight = measure().fullHeight;
+      const changed =
+        retagged > 0 ||
+        next.total !== census.total ||
+        next.pending !== census.pending ||
+        nextHeight !== height;
+      census = next;
+      height = nextHeight;
+
+      // TWO consecutive quiet steps, never one. An IntersectionObserver feed
+      // commonly mounts its next batch only on the step that scrolls PAST the
+      // sentinel, so a single silent step is normal in the middle of a feed
+      // that still has plenty to give. Stopping there would leave those images
+      // unloaded and blank in the capture — missing content is a far worse
+      // defect than the second or two the early exit saves.
+      quiet = changed ? 0 : quiet + 1;
+      if (quiet >= LAZY_QUIET_STEPS) break;
     }
+
     writeScroll(origin.x, origin.y);
     await FS.util.sleep(LAZY_SETTLE_MS);
   }

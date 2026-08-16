@@ -283,6 +283,12 @@ function engineSources() {
 let shared = null;
 let launching = null;
 let hooked = false;
+/**
+ * Bumped by `shutdown()`. A launch that was in flight when it happened resolves
+ * into a browser nobody asked for any more, so it compares its own era against
+ * this before publishing itself as `shared`.
+ */
+let era = 0;
 
 function hookExit() {
   if (hooked) return;
@@ -302,24 +308,47 @@ function hookExit() {
 
 /**
  * The one Chrome this process drives, launched on first use and reused after.
+ *
+ * Reuse is conditional on the TRANSPORT as well as on the child. `dead` only
+ * flips when Chrome exits, but `CdpPipe` closes itself on a read `end`, a read
+ * error or a WRITE error — none of which implies the process went away. Without
+ * the `pipe.closed` half of this test, one transport failure over a live Chrome
+ * is permanent: every later call hands back the same unreachable browser and
+ * every capture fails identically until the server process is restarted.
+ *
+ * Dropping such a browser is not enough either, because nothing else would ever
+ * close fds 3 and 4 — and a Chrome launched with `--remote-debugging-pipe` keeps
+ * running while they are open, holding the lock on the capture profile, so the
+ * relaunch below would fail in the `profile_busy` branch and tell the user to
+ * close a window that has no window. `kill()` is synchronous and idempotent
+ * (`pipe.close()` returns early when already closed, `child.kill()` on a reaped
+ * child is swallowed), so calling it here is free even on the already-dead path.
  * @returns {Promise<import('./chrome-launch.mjs').Browser>}
  */
 export async function getBrowser() {
-  if (shared && !shared.dead) return shared;
+  if (shared && !shared.dead && !shared.pipe.closed) return shared;
+  if (shared) shared.kill();
   shared = null;
   if (!launching) {
     hookExit();
+    const mine = era;
     launching = launchBrowser({
       headful: process.env.OFS_MCP_HEADFUL === '1',
       windowSize: `${DEFAULTS.viewportWidth},${DEFAULTS.viewportHeight}`
     }).then(
       (browser) => {
+        // `shutdown()` happened while this was starting: publishing the browser
+        // now would leave one running that no later call has a handle on.
+        if (mine !== era) {
+          browser.kill();
+          throw new Error('the capture browser was shut down while it was starting');
+        }
         shared = browser;
         launching = null;
         return browser;
       },
       (error) => {
-        launching = null;
+        if (mine === era) launching = null;
         throw error;
       }
     );
@@ -331,12 +360,38 @@ export async function getBrowser() {
 export function shutdown() {
   if (shared) shared.kill();
   shared = null;
+  // A launch in flight must not resolve into a new `shared` after this point.
+  era++;
+  launching = null;
 }
 
-/** Captures are serialized: one visible tab at a time is the only honest setup. */
+/**
+ * Captures are serialized: one visible tab at a time is the only honest setup.
+ *
+ * Requests are dispatched concurrently, so an agent that batches five capture
+ * calls queues five runs behind one another; at the 180 s ceiling of
+ * `DEFAULTS.timeoutMs` the last of them can leave the client with no answer for
+ * a quarter of an hour. Past a small depth the honest reply is to refuse now,
+ * in words the caller can act on, rather than to accept and go quiet.
+ */
+const MAX_QUEUED = 3;
 let chain = Promise.resolve();
+let queued = 0;
 function serialize(task) {
-  const run = chain.then(task, task);
+  if (queued >= MAX_QUEUED) {
+    return Promise.reject(
+      new Error(
+        // `queued` counts the head of the chain too, and that one is running,
+        // not waiting — say so rather than overstating the backlog.
+        `This server runs captures one at a time: ${queued - 1} are waiting behind one in ` +
+          'progress. Wait for them to finish, then retry this one.'
+      )
+    );
+  }
+  queued++;
+  const run = chain.then(task, task).finally(() => {
+    queued--;
+  });
   chain = run.then(
     () => undefined,
     () => undefined

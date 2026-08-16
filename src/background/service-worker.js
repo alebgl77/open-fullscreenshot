@@ -44,10 +44,25 @@ importScripts(
     { id: 'fs-action-options', key: 'menu_options', mode: null, contexts: ACTION_CONTEXTS }
   ];
 
-  const COMMAND_MODES = {
-    'capture-fullpage': FS.MODE.FULLPAGE,
-    'capture-visible': FS.MODE.VISIBLE,
-    'capture-region': FS.MODE.SELECT
+  /**
+   * Keyboard commands -> { mode, after? }.
+   *
+   * `after` is a one-run override of settings.afterCapture (see mergeAfter);
+   * a command without one behaves exactly as it always has.
+   *
+   * The copy-* pair ships with NO `suggested_key`, on purpose. Chrome honours
+   * `suggested_key` for at most four commands per extension, and the manifest
+   * already spends all four on _execute_action plus the three capture-*
+   * commands. A fifth suggested binding would be accepted by the manifest and
+   * then silently bind nothing, which is worse than no default: users assign
+   * these two at chrome://extensions/shortcuts, and the README says so.
+   */
+  const COMMANDS = {
+    'capture-fullpage': { mode: FS.MODE.FULLPAGE },
+    'capture-visible': { mode: FS.MODE.VISIBLE },
+    'capture-region': { mode: FS.MODE.SELECT },
+    'copy-fullpage': { mode: FS.MODE.FULLPAGE, after: 'copy' },
+    'copy-region': { mode: FS.MODE.SELECT, after: 'copy' }
   };
 
   /** In-flight capture. The engine refuses concurrency; this reports it nicely. */
@@ -166,6 +181,29 @@ importScripts(
     return FS.MODE.FULLPAGE;
   }
 
+  /**
+   * Apply a per-capture `afterCapture` on top of the stored settings.
+   *
+   * Validated against the single enum that already governs the setting
+   * (FS.Settings.ENUMS.afterCapture) rather than a parallel list here, so the
+   * two can never drift. Anything the enum does not contain — undefined, a
+   * number, a stale value from an older build — is ignored and the user's own
+   * preference stands; this never throws.
+   *
+   * The result is a COPY. Nothing is written back to storage: the override
+   * lasts exactly one capture, which is the whole point of it.
+   *
+   * @param {Object} settings the sanitized stored settings
+   * @param {*} after candidate override, from a command table or a UI message
+   * @returns {Object} `settings` itself when there is nothing to override
+   */
+  function mergeAfter(settings, after) {
+    const allowed = (FS.Settings.ENUMS && FS.Settings.ENUMS.afterCapture) || [];
+    if (typeof after !== 'string' || !allowed.includes(after)) return settings;
+    if (after === settings.afterCapture) return settings;
+    return Object.assign({}, settings, { afterCapture: after });
+  }
+
   async function resolveTab(hint) {
     if (hint && typeof hint === 'object' && typeof hint.id === 'number') return hint;
     if (typeof hint === 'number') {
@@ -186,8 +224,9 @@ importScripts(
    * captures would fight over the same scroll position.
    * @param {string} mode FS.MODE value
    * @param {chrome.tabs.Tab|number|undefined} tabHint
+   * @param {string} [after] one-run afterCapture override; see mergeAfter
    */
-  async function startCapture(mode, tabHint) {
+  async function startCapture(mode, tabHint, after) {
     if (activeCapture) {
       const busyTab = await resolveTab(tabHint);
       if (busyTab) ignore(FS.Engine.toast(busyTab.id, FS.util.t('progress_capturing'), 'info'));
@@ -196,7 +235,7 @@ importScripts(
 
     let tab = null;
     const task = (async () => {
-      const settings = await FS.Settings.get();
+      const settings = mergeAfter(await FS.Settings.get(), after);
       tab = await resolveTab(tabHint);
       if (!tab || typeof tab.id !== 'number') throw FS.Engine.fail(FS.ERR.CAPTURE_FAILED);
       // tab.url is only populated once activeTab is granted; when it is missing
@@ -229,9 +268,9 @@ importScripts(
   });
 
   chrome.commands.onCommand.addListener((command, tab) => {
-    const mode = COMMAND_MODES[command];
-    if (!mode) return; // _execute_action is handled by the popup / onClicked
-    ignore(startCapture(mode, tab));
+    const entry = COMMANDS[command];
+    if (!entry) return; // _execute_action is handled by the popup / onClicked
+    ignore(startCapture(entry.mode, tab, entry.after));
   });
 
   chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -252,10 +291,13 @@ importScripts(
    */
   function route(message, sender) {
     switch (message.type) {
+      // Payload: { mode, tabId?, after? }. `after` is optional and applies to
+      // this capture only — an absent or unknown value keeps settings.afterCapture
+      // exactly as stored, so an older caller sees no change in behaviour.
       case FS.MSG.UI_CAPTURE: {
         const hint = typeof message.tabId === 'number' ? message.tabId : sender && sender.tab;
         // Answer immediately: the popup closes itself so it must not await us.
-        ignore(startCapture(normalizeMode(message.mode), hint));
+        ignore(startCapture(normalizeMode(message.mode), hint, message.after));
         return Promise.resolve({ ok: true });
       }
       case FS.MSG.UI_GET_CAPTURE:

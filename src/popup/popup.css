@@ -109,3 +109,23 @@ body {
 .fs-popup__shortcut--unset {
   font-style: italic;
 }
+
+/* Shift+click sends the capture straight to the clipboard. The hint states it
+   outright, and lights up while Shift is actually down so the modifier is
+   confirmed before the click rather than after it. */
+.fs-popup__hint {
+  margin: 0;
+  padding: 0 4px 2px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--fs-text-dim);
+  transition: color 0.15s ease;
+}
+
+.fs-popup--shift .fs-popup__hint {
+  color: var(--fs-accent);
+}
+
+.fs-popup--shift .fs-popup__btn[data-mode] {
+  border-color: var(--fs-accent);
+}
