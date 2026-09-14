@@ -370,3 +370,9 @@ page instead of testing an installed build.
 
 Video capture, cloud upload, accounts, OCR, and anything requiring `chrome.debugger` are out of
 scope for v1.
+
+## License
+
+The original code in this repository is available under the MIT License. See [LICENSE](LICENSE).
+
+Third-party components remain subject to their respective licenses and notices.
